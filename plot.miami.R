@@ -5,14 +5,10 @@
 plot.miami <- function(data, split.by, split.at, chr="chr", pos="pos", p = "P") {
   # Necessary packages
   require(rlang)
-  require(checkmate)
   require(dplyr)
   require(ggplot2)
   require(patchwork)
   require(ggrepel)
-  
-  # Establish a new argument check object
-  check <- makeAssertCollection()
   
   # Check the input 
   check.miami.input(data = data, split.by = split.by, split.at = split.at)
