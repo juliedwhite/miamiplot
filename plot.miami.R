@@ -124,6 +124,22 @@ plot.miami <- function(data, split.by, split.at, chr=NULL, pos=NULL) {
     #Find the center of the chromosome
     summarize(chr.center=(max(rel.pos) + min(rel.pos))/2)
   
+  # Depending on what the user has input for split.by and split.at, make top and bottom df.
+  if(is.numeric(split.at)){
+    # Create top df using numeric info.
+    top.df <- df %>%
+      filter(!!sym(split.by) >= split.at)
+    # Create bottom df using numeric info
+    bot.df <- df %>%
+      filter(!!sym(split.by) < split.at)
+  } else if(is.character(split.at)){
+    # Create top df using character specified by user
+    top.df <- df %>%
+      filter(!!sym(split.by) == split.at)
+    # Create bottom df using character not specified by user
+    bot.df <- df %>%
+      filter(!!sym(split.by) != split.at)
+  }
   
 }
 
