@@ -2,7 +2,7 @@
 # Function to generate ggplot2 based miami plot
 # Julie D. White
 
-plot.miami <- function(data, split.by, split.at, chr=NULL, pos=NULL) {
+plot.miami <- function(data, split.by, split.at, chr="chr", pos="pos") {
   # Necessary packages
   require(rlang)
   require(checkmate)
@@ -17,60 +17,25 @@ plot.miami <- function(data, split.by, split.at, chr=NULL, pos=NULL) {
   # Establish a new argument check object
   check <- makeAssertCollection()
   
-  # Check that df is a dataframe
-  assertDataFrame(df, col.names = "named", add = check)
+  # Check the input 
+  check.miami.input(data = data, split.by = split.by, split.at = split.at)
   
-  # The user should supply the column name by which they want to split their data using split.by.
-    # For example: beta values, study name, genotype status. 
-  assertNames(split.by, type = "named", subset.of = colnames(df),  add = check)
-  
-  # The user should supply the point at which they want to split their data using split.at, as an integer or character.
-    # For example: if they want positive beta values on top, then split.at = 0
-    # For example, if they want "genotyped" SNPs on top, then split.at = "genotyped"
-  # If the user has supplied a single character for split.at
-  if(!testCharacter(split.at, len = 1)){
-    if(!testNumeric(split.at, len = 1)){
-      check$push("split.at must be either character or numeric, with length = 1")
-    }
-  } 
-  
-  # Identify the column containing chromosome information.
-  if(testNull(chr)){
-    # Chromosome column not specified. Find column index matching "chr" while ignoring case.
-    if(testNames("chr", subset.of = tolower(colnames(df)))){
-      # If this is true, then there is a column named "chr" or some permutation of it
-      chr.indx <- grep(pattern = "chr", x = colnames(df), ignore.case = T)
-      chr.name <- colnames(df)[chr.indx]
-    } else {
-      # I didn't find a column named chr. Ask the user to specify this.
-      check$push("I cannot find a chromosome column named 'chr'. Please specify using chr argument.")
-    }
-  } else if(testNames(chr, type = "named", subset.of = colnames(df))) {
+  # Identify column containing chromosome information.
+  if(testNames(chr, type = "named", subset.of = colnames(df))) {
     # Chromosome column specified and is subset of colnames. Find column index matching this value.
     chr.name <- chr
     chr.indx <- which(colnames(df)==chr.name)
   } else {
-    # Chromosome column specified, but not in the right format or not a subset of colnames.
+    # Chromosome column name is not in the right format or is not a subset of colnames. 
     assertNames(chr, type = "named", subset.of = colnames(df), add = check)
   }
   
-  # Identify the column containing position information.
-  if(testNull(pos)){
-    # Position column not specified. Find column index matching "pos" while ignoring case.
-    if(testNames("pos", subset.of = tolower(colnames(df)))){
-      # If this is true, then there is a column named "pos" or some permutation of it
-      pos.indx <- grep(pattern = "pos", x = colnames(df), ignore.case = T)
-      pos.name <- colnames(df)[pos.indx]
-    } else {
-      # I didn't find a column named pos. Ask the user to specify this.
-      check$push("I cannot find a position column named 'pos'. Please specify using pos argument.")
-    }
-  } else if(testNames(pos, type = "named", subset.of = colnames(df))) {
-    # Position column specified and is subset of colnames. Find column index matching this value.
+  if(testNames(pos, type = "named", subset.of = colnames(df))) {
+    # Position column specified is a subset of colnames. Find column index matching this value.
     pos.name <- pos
     pos.indx <- which(colnames(df)==pos.name)
   } else {
-    # Position column specified, but not in the right format or not a subset of colnames.
+    # Position column name is not in the right format or is not a subset of colnames. 
     assertNames(pos, type = "named", subset.of = colnames(df), add = check)
   }
   
@@ -141,6 +106,7 @@ plot.miami <- function(data, split.by, split.at, chr=NULL, pos=NULL) {
       filter(!!sym(split.by) != split.at)
   }
   
+
 }
 
 
