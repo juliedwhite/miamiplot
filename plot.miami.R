@@ -34,48 +34,73 @@ plot.miami <- function(data, split.by, split.at, chr=NULL, pos=NULL) {
     }
   } 
   
-  reportAssertions(check)
-  
   # Identify the column containing chromosome information.
-  if(!is.null(chr)){
-    # Chromosome column specified. Find column index matching this value.
-    chr.name <- chr
-    chr.indx <- grep(pattern = chr.name, x = names(df), ignore.case = T)
-  }  else {
+  if(testNull(chr)){
     # Chromosome column not specified. Find column index matching "chr" while ignoring case.
-    chr.indx <- grep(pattern = "chr", x = names(df), ignore.case = T)
-    chr.name <- names(df)[chr.indx]
-    if(is_empty(chr.indx)){
-      stop("I cannot find a chromosome column named 'chr'. Please specify using chr argument.")
+    if(testNames("chr", subset.of = tolower(colnames(df)))){
+      # If this is true, then there is a column named "chr" or some permutation of it
+      chr.indx <- grep(pattern = "chr", x = colnames(df), ignore.case = T)
+      chr.name <- colnames(df)[chr.indx]
+    } else {
+      # I didn't find a column named chr. Ask the user to specify this.
+      check$push("I cannot find a chromosome column named 'chr'. Please specify using chr argument.")
     }
+  } else if(testNames(chr, type = "named", subset.of = colnames(df))) {
+    # Chromosome column specified and is subset of colnames. Find column index matching this value.
+    chr.name <- chr
+    chr.indx <- which(colnames(df)==chr.name)
+  } else {
+    # Chromosome column specified, but not in the right format or not a subset of colnames.
+    assertNames(chr, type = "named", subset.of = colnames(df), add = check)
   }
   
-  # Figure out if the chromosome column is numeric or not.
-  if(!is.numeric(df[,chr.indx])) {
-    stop("Please make sure your chromosome column is numeric.")
-  }
-  
-  # Idenitfy the column containing position information. 
-  if(!is.null(pos)){
-    # Position column specified. Find column index matching this value.
-    pos.name <- pos
-    pos.indx <- grep(pattern = pos.name, x = names(df), ignore.case = T)
-  }  else {
+  # Identify the column containing position information.
+  if(testNull(pos)){
     # Position column not specified. Find column index matching "pos" while ignoring case.
-    pos.indx <- grep(pattern = "pos", x = names(df), ignore.case = T)
-    pos.name <- names(df)[pos.indx]
-    if(is_empty(pos.indx)){
-      stop("I cannot find a position column named 'pos'. Please specify using pos argument.")
+    if(testNames("pos", subset.of = tolower(colnames(df)))){
+      # If this is true, then there is a column named "pos" or some permutation of it
+      pos.indx <- grep(pattern = "pos", x = colnames(df), ignore.case = T)
+      pos.name <- colnames(df)[pos.indx]
+    } else {
+      # I didn't find a column named pos. Ask the user to specify this.
+      check$push("I cannot find a position column named 'pos'. Please specify using pos argument.")
     }
+  } else if(testNames(pos, type = "named", subset.of = colnames(df))) {
+    # Position column specified and is subset of colnames. Find column index matching this value.
+    pos.name <- pos
+    pos.indx <- which(colnames(df)==pos.name)
+  } else {
+    # Position column specified, but not in the right format or not a subset of colnames.
+    assertNames(pos, type = "named", subset.of = colnames(df), add = check)
   }
   
-  # Figure out if the position column is numeric or not.
-  if(!is.numeric(df[,pos.indx])) {
-    stop("Please make sure your position column is numeric.")
+  # At this point, check if there are any errors. 
+  if(!check$isEmpty()) {
+    reportAssertions(check)
+  }
+  
+  # Test if chromosome column is numeric. 
+  if(!testMultiClass(df[,chr.indx], classes = c("numeric", "integer"))){
+    check$push(paste0("Your chromosome column is of class ",
+                      class(df[,chr.indx]),
+                      ". Please make sure your chromosome column is numeric or integer."))
+  }
+
+  # Test if position column is numeric. 
+  if(!testMultiClass(df[,pos.indx], classes = c("numeric", "integer"))){
+    check$push(paste0("Your position column is of class ",
+                      class(df[,pos.indx]),
+                      ". Please make sure your position column is numeric or integer."))
+  }
+
+  # At this point, check if there are any errors. 
+  if(!check$isEmpty()) {
+    reportAssertions(check)
   }
   
   # To make the plot, we need to know the cumulative position of each probe/snp across the whole genome.
   df <- df %>% 
+    #Group by chromosome
     group_by(!!sym(chr.name)) %>% 
     # Compute chromosome size
     summarise(chrlength = max(!!sym(pos.name))) %>%  
