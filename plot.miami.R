@@ -10,8 +10,13 @@ plot.miami <- function(data, chr=NULL, pos=NULL) {
   require(patchwork)
   require(ggrepel)
   
-  # Get the dataframe 
+  # Rename data
   df <- data
+  
+  # Check that it is a dataframe
+  if(!is.data.frame(df)){
+    stop("Please supply a data.frame object, ideally with column names specified.")
+  }
   
   # Identify the column containing chromosome information.
   if(!is.null(chr)){
@@ -75,6 +80,8 @@ plot.miami <- function(data, chr=NULL, pos=NULL) {
     group_by(!!sym(chr.name)) %>% 
     #Find the center of the chromosome
     summarize(chr.center=(max(rel.pos) + min(rel.pos))/2)
+  
+  
   
 }
 
