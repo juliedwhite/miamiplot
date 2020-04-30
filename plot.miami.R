@@ -2,7 +2,7 @@
 # Function to generate ggplot2 based miami plot
 # Julie D. White
 
-plot.miami <- function(data, split.by, split.at, chr="chr", pos="pos") {
+plot.miami <- function(data, split.by, split.at, chr="chr", pos="pos", p = "P") {
   # Necessary packages
   require(rlang)
   require(checkmate)
@@ -25,9 +25,14 @@ plot.miami <- function(data, split.by, split.at, chr="chr", pos="pos") {
   pos.indx <- find.col.indx(data = data, x = pos)
   pos.name <- pos
   
-  # Test if chromosome and position columns are numeric or integer. 
+  # Identify column index for p-value information
+  p.indx <- find.col.indx(data = data, x = p)
+  p.name <- p
+  
+  # Test if chromosome, position, pvalue columns are numeric or integer. 
   check.miami.numeric(data = data, col.indx = chr.indx)
   check.miami.numeric(data = data, col.indx = pos.indx)
+  check.miami.numeric(data = data, col.indx = p.indx)
   
   # To make the plot, we need to know the cumulative position of each probe/snp across the whole genome.
   data <- data %>% 
@@ -72,7 +77,9 @@ plot.miami <- function(data, split.by, split.at, chr="chr", pos="pos") {
       filter(!!sym(split.by) != split.at)
   }
   
-  return(c(nrow(top.data), nrow(bot.data)))
+  
+  
+  
 }
 
 
