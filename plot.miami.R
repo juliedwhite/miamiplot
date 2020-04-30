@@ -2,7 +2,7 @@
 # Function to generate ggplot2 based miami plot
 # Julie D. White
 
-plot.miami <- function(data, chr=NULL, pos=NULL) {
+plot.miami <- function(data, split.by, split.at, chr=NULL, pos=NULL) {
   # Necessary packages
   require(rlang)
   require(dplyr)
@@ -18,6 +18,12 @@ plot.miami <- function(data, chr=NULL, pos=NULL) {
     stop("Please supply a data.frame object, ideally with column names specified.")
   }
   
+  # The user should supply the column name by which they want to split their data using split.by. 
+    # For example, beta values, study name, genotyped vs. imputed status. 
+  if(is.null(split.by)) {
+    stop("Please specify the column name that you want to use to split your Miami plot.")
+  }
+
   # Identify the column containing chromosome information.
   if(!is.null(chr)){
     # Chromosome column specified. Find column index matching this value.
@@ -80,7 +86,6 @@ plot.miami <- function(data, chr=NULL, pos=NULL) {
     group_by(!!sym(chr.name)) %>% 
     #Find the center of the chromosome
     summarize(chr.center=(max(rel.pos) + min(rel.pos))/2)
-  
   
   
 }
