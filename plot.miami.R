@@ -2,7 +2,16 @@
 # Function to generate ggplot2 based miami plot
 # Julie D. White
 
-plot.miami <- function(data, split.by, split.at, chr="chr", pos="pos", p = "P") {
+plot.miami <- function(
+  data, 
+  split.by, 
+  split.at, 
+  chr="chr", 
+  pos="pos", 
+  p = "P", 
+  genomewideline = 5e-8,
+  suggestiveline = 1e-5) {
+  
   # Necessary packages
   require(rlang)
   require(dplyr)
@@ -95,6 +104,18 @@ plot.miami <- function(data, split.by, split.at, chr="chr", pos="pos", p = "P") 
     labs(x = "", y = expression('-log'[10]*'(P)')) + 
     theme_classic() +
     theme(legend.position = "none", axis.text.x = element_blank(), axis.title.x = element_blank(), plot.margin = margin(t=0))
+  
+  # If the user has requested a suggetive line, add:
+  if(!is.null(suggestiveline)){
+    top.plot <- top.plot + geom_hline(yintercept = -log10(suggestiveline), color = "red", linetype = "dashed", size = 0.3)
+    bottom.plot <- bottom.plot + geom_hline(yintercept = -log10(suggestiveline), color = "red", linetype = "dashed", size = 0.3)
+  }
+  
+  # If the user has requested a genome-wide line, add: 
+  if(!is.null(genomewideline)){
+    top.plot <- top.plot + geom_hline(yintercept = -log10(genomewideline), color = "red", linetype = "solid", size = 0.3)
+    bottom.plot <- bottom.plot + geom_hline(yintercept = -log10(genomewideline), color = "red", linetype = "solid", size = 0.3)
+  }
   
   # Put the two together
   p <- top.plot + bottom.plot + plot_layout(ncol=1)
