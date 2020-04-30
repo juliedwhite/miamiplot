@@ -69,6 +69,13 @@ plot.miami <- function(data, chr=NULL, pos=NULL) {
     # Remove cumulative chr length column
     select(-cumulativechrlength)
   
+  # However, we don't want to print the cumulative position on the x-axis, so we need to provide the chromosome position labels relative to the entire genome.
+  axis.df = df %>% 
+    #Group by chromosome
+    group_by(!!sym(chr.name)) %>% 
+    #Find the center of the chromosome
+    summarize(chr.center=(max(rel.pos) + min(rel.pos))/2)
+  
 }
 
 
