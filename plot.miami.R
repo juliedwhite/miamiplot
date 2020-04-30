@@ -22,7 +22,7 @@ plot.miami <- function(data, chr=NULL, pos=NULL) {
     # Chromosome column not specified. Find column index matching "chr" while ignoring case.
     chr.indx <- grep(pattern = "chr", x = names(df), ignore.case = T)
     chr.name <- names(df)[chr.indx]
-    if(is_empty(chr)){
+    if(is_empty(chr.indx)){
       stop("I cannot find a chromosome column named 'chr'. Please specify using chr argument.")
     }
   }
@@ -34,39 +34,40 @@ plot.miami <- function(data, chr=NULL, pos=NULL) {
   
   # Idenitfy the column containing position information. 
   if(!is.null(pos)){
-    # Chromosome column specified. Find column index matching this value.
-    pos <- grep(pattern = pos, x = names(df), ignore.case = T)
+    # Position column specified. Find column index matching this value.
+    pos.name <- pos
+    pos.indx <- grep(pattern = pos.name, x = names(df), ignore.case = T)
   }  else {
-    # Chromosome column not specified. Find column index matching "pos" while ignoring case.
-    pos <- grep(pattern = "pos", x = names(df), ignore.case = T)
-    if(is_empty(pos)){
+    # Position column not specified. Find column index matching "pos" while ignoring case.
+    pos.indx <- grep(pattern = "pos", x = names(df), ignore.case = T)
+    pos.name <- names(df)[pos.indx]
+    if(is_empty(pos.indx)){
       stop("I cannot find a position column named 'pos'. Please specify using pos argument.")
     }
   }
   
   # Figure out if the position column is numeric or not.
-  if(!is.numeric(df[,pos])) {
+  if(!is.numeric(df[,pos.indx])) {
     stop("Please make sure your position column is numeric.")
   }
   
   # To make the plot, we need to know the cumulative position of each probe/snp across the whole genome.
   df <- df %>% 
-    group_by(chr) %>% 
+    group_by(!!sym(chr.name)) %>% 
     # Compute chromosome size
-    summarise(chrlength = max(pos)) %>%  
+    summarise(chrlength = max(!!sym(pos.name))) %>%  
     # Calculate cumulative position of each chromosome
     mutate(cumulativechrlength = cumsum(as.numeric(chrlength))-chrlength) %>% 
     # Remove chr length column
     select(-chrlength) %>%
     # Temporarily add the cumulative length of each chromosome to the initial dataset 
-    left_join(df, ., by=c(chr=chr)) %>%
+    left_join(df, ., by=chr.name) %>%
     # Sort by chr then position 
-    arrange(chr, pos) %>%
+    arrange(!!sym(chr.name), !!sym(pos.name)) %>%
     # Add the position to the cumulative chromosome length to get the position of this probe relative to all other probes
-    mutate(rel.pos = pos + cumulativechrlength) %>%
+    mutate(rel.pos = !!sym(pos.name) + cumulativechrlength) %>%
     # Remove cumulative chr length column
     select(-cumulativechrlength)
-  
   
 }
 
