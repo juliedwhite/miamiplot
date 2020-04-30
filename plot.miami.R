@@ -10,7 +10,9 @@ plot.miami <- function(
   pos="pos", 
   p = "P", 
   genomewideline = 5e-8,
-  suggestiveline = 1e-5) {
+  suggestiveline = 1e-5, 
+  top.n.hits = NULL,
+  hits.col = NULL) {
   
   # Necessary packages
   require(rlang)
