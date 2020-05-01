@@ -28,18 +28,18 @@ check.miami.input <- function(data, split.by, split.at) {
 
 
 # Find column information 
-find.col.indx <- function(data, x) {
+find.col.indx <- function(data, col) {
   require(checkmate)
   
   # Identify column containing the x value supplied
-  if(testNames(x, type = "named", subset.of = colnames(data))) {
+  if(testNames(col, type = "named", subset.of = colnames(data))) {
     # Column specified and is subset of colnames. Find column index matching this value.
-    col.indx <- which(colnames(data)==x)
+    col.indx <- which(colnames(data)==col)
     # Return column index
     return(col.indx)
   } else {
     # Column name is not in the right format or is not a subset of colnames. 
-    assertNames(x, type = "named", subset.of = colnames(data))
+    assertNames(col, type = "named", subset.of = colnames(data))
   }
 }
 
