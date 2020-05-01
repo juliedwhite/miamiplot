@@ -152,16 +152,14 @@ plot.miami <- function(
     top.plot <- top.plot + 
       geom_label_repel(data = top.labels, aes(label = label), size = 2,
                        segment.size = 0.2, point.padding = 0.2, 
-                       min.segment.length = 0, force = 2, 
-                       ylim = c(min(-log10(top.labels[,p.name])), NA), 
-                       box.padding = 0.5)
+                       ylim = c(maxp/2, NA), 
+                       min.segment.length = 0, force = 2, box.padding = 0.5)
     
     bottom.plot <- bottom.plot +
       geom_label_repel(data = bot.labels, aes(label = label), size = 2, 
                        segment.size = 0.2, point.padding = 0.2, 
-                       min.segment.length = 0, force = 2, 
-                       ylim = c(NA, min(-log10(bot.labels[,p.name]))), 
-                       box.padding = 0.5)
+                       ylim = c(NA, -(maxp/2)), 
+                       min.segment.length = 0, force = 2, box.padding = 0.5)
   }
 
   # Put the two together
