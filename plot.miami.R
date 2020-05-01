@@ -22,7 +22,7 @@ plot.miami <- function(
   require(checkmate)
   require(ggrepel)
   
-  # Check the input 
+  # Check the required input 
   check.miami.input(data = data, split.by = split.by, split.at = split.at)
   
   # Identify column index for chromosome information. 
@@ -110,8 +110,8 @@ plot.miami <- function(
   
   # If the user has requested a suggetive line, add:
   if(!is.null(suggestiveline)){
-    top.plot <- top.plot + geom_hline(yintercept = -log10(suggestiveline), color = "red", linetype = "dashed", size = 0.3)
-    bottom.plot <- bottom.plot + geom_hline(yintercept = -log10(suggestiveline), color = "red", linetype = "dashed", size = 0.3)
+    top.plot <- top.plot + geom_hline(yintercept = -log10(suggestiveline), color = "blue", linetype = "dashed", size = 0.3)
+    bottom.plot <- bottom.plot + geom_hline(yintercept = -log10(suggestiveline), color = "blue", linetype = "dashed", size = 0.3)
   }
   
   # If the user has requested a genome-wide line, add: 
@@ -121,24 +121,36 @@ plot.miami <- function(
   }
   
   # If the user has requested labeling the top n hits: 
-  if(!is.null(top.n.hits)) {
-    # Check that top.n.hits is a positive natural number and
-    # Check that the column name provided for labels is in the df.
-    if(checkCount(top.n.hits) & testNames(hits.label, type = "named", subset.of = colnames(data))){
-      # If the user has given a single column name in "hits.label"
-      if(length(hits.label == 1)){
-        top.labels <- top.data %>%
-          arrange(desc(-log10(!!sym(p.name)))) %>%
-          mutate(label = !!sym(hits.label)) %>%
-          select(rel.pos, !!sym(p.name), label) %>%
-          slice(1:top.n.hits)
-        
-        bot.labels <- bot.data %>%
-          arrange(desc(-log10(!!sym(p.name)))) %>%
-          mutate(label = !!sym(hits.label)) %>%
-          select(rel.pos, !!sym(p.name), label) %>%
-          slice(1:top.n.hits)
-      }
+  # Check that top.n.hits is a positive natural number and
+  # Check that the column name provided for labels is in the df.
+  if(testCount(top.n.hits) & testNames(hits.label, type = "named", subset.of = colnames(data))){
+    # If the user has given a single column name in "hits.label"
+    if(length(hits.label) == 1){
+      top.labels <- top.data %>%
+        arrange(desc(-log10(!!sym(p.name)))) %>%
+        mutate(label = !!sym(hits.label)) %>%
+        select(rel.pos, !!sym(p.name), label) %>%
+        slice(1:top.n.hits)
+      
+      bot.labels <- bot.data %>%
+        arrange(desc(-log10(!!sym(p.name)))) %>%
+        mutate(label = !!sym(hits.label)) %>%
+        select(rel.pos, !!sym(p.name), label) %>%
+        slice(1:top.n.hits)
+      
+      # If the user has given two column names in "hits.label"
+    } else if(length(hits.label) == 2){
+      top.labels <- top.data %>%
+        arrange(desc(-log10(!!sym(p.name)))) %>%
+        mutate(label = paste0(!!sym(hits.label[1]), "\n", !!sym(hits.label[2]))) %>%
+        select(rel.pos, !!sym(p.name), label) %>%
+        slice(1:top.n.hits)
+      
+      bot.labels <- bot.data %>%
+        arrange(desc(-log10(!!sym(p.name)))) %>%
+        mutate(label = paste(!!sym(hits.label[1]), "\n", !!sym(hits.label[2]))) %>%
+        select(rel.pos, !!sym(p.name), label) %>%
+        slice(1:top.n.hits)
     }
     
     # Add labels to plot 
