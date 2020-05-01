@@ -11,8 +11,9 @@ plot.miami <- function(
   p = "P", 
   genomewideline = 5e-8,
   suggestiveline = 1e-5, 
-  top.n.hits = NULL,
-  hits.label = NULL) {
+  hits.label = NULL,
+  top.n.hits = NULL
+  ) {
   
   # Necessary packages
   require(rlang)
@@ -26,15 +27,15 @@ plot.miami <- function(
   check.miami.input(data = data, split.by = split.by, split.at = split.at)
   
   # Identify column index for chromosome information. 
-  chr.indx <- find.col.indx(data = data, x = chr)
+  chr.indx <- find.col.indx(data = data, col = chr)
   chr.name <- chr
   
   # Identify column index for position information
-  pos.indx <- find.col.indx(data = data, x = pos)
+  pos.indx <- find.col.indx(data = data, col = pos)
   pos.name <- pos
   
   # Identify column index for p-value information
-  p.indx <- find.col.indx(data = data, x = p)
+  p.indx <- find.col.indx(data = data, col = p)
   p.name <- p
   
   # Test if chromosome, position, pvalue columns are numeric or integer. 
@@ -139,59 +140,15 @@ plot.miami <- function(
                  linetype = "solid", size = 0.3)
   }
   
-  # If the user has requested labeling the top n hits: 
-  # Check that top.n.hits is a positive natural number and
-  # Check that the column name provided for labels is in the df.
-  if(testCount(top.n.hits) & 
-     testNames(hits.label, type = "named", subset.of = colnames(data))){
-    # If the user has given a single column name in "hits.label"
-    if(length(hits.label) == 1){
-      top.labels <- top.data %>%
-        arrange(desc(-log10(!!sym(p.name)))) %>%
-        mutate(label = !!sym(hits.label)) %>%
-        select(rel.pos, !!sym(p.name), label) %>%
-        slice(1:top.n.hits)
-      
-      bot.labels <- bot.data %>%
-        arrange(desc(-log10(!!sym(p.name)))) %>%
-        mutate(label = !!sym(hits.label)) %>%
-        select(rel.pos, !!sym(p.name), label) %>%
-        slice(1:top.n.hits)
-      
-      # If the user has given two column names in "hits.label"
-    } else if(length(hits.label) == 2){
-      top.labels <- top.data %>%
-        arrange(desc(-log10(!!sym(p.name)))) %>%
-        mutate(label = paste0(!!sym(hits.label[1]),"\n",!!sym(hits.label[2]))) %>%
-        select(rel.pos, !!sym(p.name), label) %>%
-        slice(1:top.n.hits)
-      
-      bot.labels <- bot.data %>%
-        arrange(desc(-log10(!!sym(p.name)))) %>%
-        mutate(label = paste(!!sym(hits.label[1]),"\n",!!sym(hits.label[2]))) %>%
-        select(rel.pos, !!sym(p.name), label) %>%
-        slice(1:top.n.hits)
-    }
-    # If the user has given a character vector of which SNPs/probes/genes to label
-  } else if(is.null(top.n.hits) & !is.null(hits.label)) {
-    # Make sure the hits.label are character values.
-    checkCharacter(hits.label)
-    # Find which column contains the hits.label items
-    hits.col.indx <- unname(which(sapply(data, function(x) any(x %in% hits.label))))
-    # Filter the top data to get the position of these labels.
-    top.labels <- top.data %>%
-      filter(!!sym(colnames(top.data)[hits.col.indx]) %in% hits.label) %>% 
-      mutate(label = !!sym(colnames(top.data)[hits.col.indx])) %>%
-      select(rel.pos, !!sym(p.name), label)
-    # Filter the bottom data to get the position of these labels. 
-    bot.labels <- bot.data %>%
-      filter(!!sym(colnames(bot.data)[hits.col.indx]) %in% hits.label) %>% 
-      mutate(label = !!sym(colnames(bot.data)[hits.col.indx])) %>%
-      select(rel.pos, !!sym(p.name), label) 
-  }
-  
-  # If we just created labels, then add them to the plot
-  if(!missing("top.labels") | !missing("bot.labels")){
+  # If the user requests labels: 
+  if(!is.null(hits.label)){
+    # Create the labels for the top and bottom plot
+    top.labels <- make.labels(data = top.data, p.name = p.name, 
+                              hits.label = hits.label, top.n.hits = top.n.hits)
+    bot.labels <- make.labels(data = bot.data, p.name = p.name, 
+                              hits.label = hits.label, top.n.hits = top.n.hits)
+    
+    # Add to plots
     top.plot <- top.plot + 
       geom_label_repel(data = top.labels, aes(label = label), size = 2,
                        segment.size = 0.2, point.padding = 0.2, 
