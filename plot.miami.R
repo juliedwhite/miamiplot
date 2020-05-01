@@ -42,7 +42,8 @@ plot.miami <- function(
   check.miami.numeric(data = data, col.indx = pos.indx)
   check.miami.numeric(data = data, col.indx = p.indx)
   
-  # To make the plot, we need to know the cumulative position of each probe/snp across the whole genome.
+  # To make the plot, we need to know the cumulative position of each probe/snp 
+    # across the whole genome.
   data <- data %>% 
     #Group by chromosome
     group_by(!!sym(chr.name)) %>% 
@@ -52,16 +53,19 @@ plot.miami <- function(
     mutate(cumulativechrlength = cumsum(as.numeric(chrlength))-chrlength) %>% 
     # Remove chr length column
     select(-chrlength) %>%
-    # Temporarily add the cumulative length of each chromosome to the initial dataset 
+    # Temporarily add the cumulative length of each chromosome to the initial 
+      # dataset 
     left_join(data, ., by=chr.name) %>%
     # Sort by chr then position 
     arrange(!!sym(chr.name), !!sym(pos.name)) %>%
-    # Add the position to the cumulative chromosome length to get the position of this probe relative to all other probes
+    # Add the position to the cumulative chromosome length to get the position 
+      # of this probe relative to all other probes
     mutate(rel.pos = !!sym(pos.name) + cumulativechrlength) %>%
     # Remove cumulative chr length column
     select(-cumulativechrlength)
   
-  # However, we don't want to print the cumulative position on the x-axis, so we need to provide the chromosome position labels relative to the entire genome.
+  # However, we don't want to print the cumulative position on the x-axis, so we
+    # need to provide the chromosome position labels relative to the entire genome.
   axis.data = data %>% 
     #Group by chromosome
     group_by(!!sym(chr.name)) %>% 
@@ -71,7 +75,8 @@ plot.miami <- function(
   # To create a symmetric looking plot, calculate the maximum p-value
   maxp <- ceiling(max(-log10(data[,p.indx])))
   
-  # Depending on what the user has input for split.by and split.at, make top and bottom data.
+  # Depending on what the user has input for split.by and split.at, make top 
+    # and bottom data.
   if(is.numeric(split.at)){
     # Create top data using numeric info.
     top.data <- data %>%
@@ -92,38 +97,53 @@ plot.miami <- function(
   top.plot <- ggplot(data = top.data, aes(x=rel.pos, y=-log10(!!sym(p.name)))) +
     geom_point(aes(color=as.factor(!!sym(chr.name))), size=0.25) +
     scale_color_manual(values = rep(c("black", "grey"), nrow(axis.data))) +
-    scale_x_continuous(labels = pull(axis.data[,1]), breaks = axis.data$chr.center, expand = expansion(mult=0.01)) +
-    scale_y_continuous(limits = c(0, maxp), expand = expansion(mult = c(0.02,0))) + 
+    scale_x_continuous(labels = pull(axis.data[,1]), 
+                       breaks = axis.data$chr.center, 
+                       expand = expansion(mult=0.01)) +
+    scale_y_continuous(limits = c(0, maxp), 
+                       expand = expansion(mult = c(0.02,0))) + 
     labs(x = "", y = expression('-log'[10]*'(P)')) +
     theme_classic() +
-    theme(legend.position = "none", axis.title.x = element_blank(), plot.margin = margin(b=0))
+    theme(legend.position = "none", axis.title.x = element_blank(), 
+          plot.margin = margin(b=0))
  
   # Create base bottom plot
   bottom.plot <- ggplot(data = bot.data, aes(x=rel.pos, y=-log10(!!sym(p.name)))) +
     geom_point(aes(color=as.factor(!!sym(chr.name))), size=0.25) +
     scale_color_manual(values = rep(c("black", "grey"), nrow(axis.data))) +
-    scale_x_continuous(breaks = axis.data$chr.center, position = "top", expand = expansion(mult=0.01)) +
+    scale_x_continuous(breaks = axis.data$chr.center, position = "top", 
+                       expand = expansion(mult=0.01)) +
     scale_y_reverse(limits = c(maxp, 0), expand = expansion(mult = c(0,0.02))) + 
     labs(x = "", y = expression('-log'[10]*'(P)')) + 
     theme_classic() +
-    theme(legend.position = "none", axis.text.x = element_blank(), axis.title.x = element_blank(), plot.margin = margin(t=0))
+    theme(legend.position = "none", axis.text.x = element_blank(), 
+          axis.title.x = element_blank(), plot.margin = margin(t=0))
   
   # If the user has requested a suggetive line, add:
   if(!is.null(suggestiveline)){
-    top.plot <- top.plot + geom_hline(yintercept = -log10(suggestiveline), color = "blue", linetype = "dashed", size = 0.3)
-    bottom.plot <- bottom.plot + geom_hline(yintercept = -log10(suggestiveline), color = "blue", linetype = "dashed", size = 0.3)
+    top.plot <- top.plot + 
+      geom_hline(yintercept = -log10(suggestiveline), color = "blue", 
+                 linetype = "dashed", size = 0.3)
+    bottom.plot <- bottom.plot + 
+      geom_hline(yintercept = -log10(suggestiveline),color = "blue", 
+                 linetype = "dashed", size = 0.3)
   }
   
   # If the user has requested a genome-wide line, add: 
   if(!is.null(genomewideline)){
-    top.plot <- top.plot + geom_hline(yintercept = -log10(genomewideline), color = "red", linetype = "solid", size = 0.3)
-    bottom.plot <- bottom.plot + geom_hline(yintercept = -log10(genomewideline), color = "red", linetype = "solid", size = 0.3)
+    top.plot <- top.plot + 
+      geom_hline(yintercept = -log10(genomewideline), color = "red", 
+                 linetype = "solid", size = 0.3)
+    bottom.plot <- bottom.plot + 
+      geom_hline(yintercept = -log10(genomewideline), color = "red", 
+                 linetype = "solid", size = 0.3)
   }
   
   # If the user has requested labeling the top n hits: 
   # Check that top.n.hits is a positive natural number and
   # Check that the column name provided for labels is in the df.
-  if(testCount(top.n.hits) & testNames(hits.label, type = "named", subset.of = colnames(data))){
+  if(testCount(top.n.hits) & 
+     testNames(hits.label, type = "named", subset.of = colnames(data))){
     # If the user has given a single column name in "hits.label"
     if(length(hits.label) == 1){
       top.labels <- top.data %>%
@@ -142,29 +162,31 @@ plot.miami <- function(
     } else if(length(hits.label) == 2){
       top.labels <- top.data %>%
         arrange(desc(-log10(!!sym(p.name)))) %>%
-        mutate(label = paste0(!!sym(hits.label[1]), "\n", !!sym(hits.label[2]))) %>%
+        mutate(label = paste0(!!sym(hits.label[1]),"\n",!!sym(hits.label[2]))) %>%
         select(rel.pos, !!sym(p.name), label) %>%
         slice(1:top.n.hits)
       
       bot.labels <- bot.data %>%
         arrange(desc(-log10(!!sym(p.name)))) %>%
-        mutate(label = paste(!!sym(hits.label[1]), "\n", !!sym(hits.label[2]))) %>%
+        mutate(label = paste(!!sym(hits.label[1]),"\n",!!sym(hits.label[2]))) %>%
         select(rel.pos, !!sym(p.name), label) %>%
         slice(1:top.n.hits)
     }
     
     # Add labels to plot 
-    top.plot <- top.plot + geom_label_repel(data = top.labels, aes(label = label), size = 2,
-                                            segment.size = 0.2, point.padding = 0.2, 
-                                            min.segment.length = 0, force = 2, 
-                                            ylim = c(min(-log10(top.labels[,p.name])), NA), 
-                                            box.padding = 0.5)
+    top.plot <- top.plot + 
+      geom_label_repel(data = top.labels, aes(label = label), size = 2,
+                       segment.size = 0.2, point.padding = 0.2, 
+                       min.segment.length = 0, force = 2, 
+                       ylim = c(min(-log10(top.labels[,p.name])), NA), 
+                       box.padding = 0.5)
     
-    bottom.plot <- bottom.plot + geom_label_repel(data = bot.labels, aes(label = label), size = 2,
-                                                  segment.size = 0.2, point.padding = 0.2, 
-                                                  min.segment.length = 0, force = 2, 
-                                                  ylim = c(NA, min(-log10(bot.labels[,p.name]))), 
-                                                  box.padding = 0.5)
+    bottom.plot <- bottom.plot +
+      geom_label_repel(data = bot.labels, aes(label = label), size = 2, 
+                       segment.size = 0.2, point.padding = 0.2, 
+                       min.segment.length = 0, force = 2, 
+                       ylim = c(NA, min(-log10(bot.labels[,p.name]))), 
+                       box.padding = 0.5)
   }
   
   # Put the two together
