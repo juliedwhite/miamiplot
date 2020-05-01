@@ -1,11 +1,17 @@
 Package: miamiplot
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Create a ggplot2 miami plot
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Authors@R: person("Julie", "White", email = "julie.white@nih.gov", role = c("aut", "cre"))
+Description: This package can be used to create a Miami plot in the form of a 
+    ggplot2 object. Users can choose significance lines, colors, and labels. 
+License: NA
 Encoding: UTF-8
 LazyData: true
+Imports: 
+    rlang,
+    dplyr,
+    ggplot2,
+    patchwork,
+    checkmate,
+    ggrepel
