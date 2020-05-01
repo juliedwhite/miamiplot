@@ -172,8 +172,26 @@ plot.miami <- function(
         select(rel.pos, !!sym(p.name), label) %>%
         slice(1:top.n.hits)
     }
-    
-    # Add labels to plot 
+    # If the user has given a character vector of which SNPs/probes/genes to label
+  } else if(is.null(top.n.hits) & !is.null(hits.label)) {
+    # Make sure the hits.label are character values.
+    checkCharacter(hits.label)
+    # Find which column contains the hits.label items
+    hits.col.indx <- unname(which(sapply(data, function(x) any(x %in% hits.label))))
+    # Filter the top data to get the position of these labels.
+    top.labels <- top.data %>%
+      filter(!!sym(colnames(top.data)[hits.col.indx]) %in% hits.label) %>% 
+      mutate(label = !!sym(colnames(top.data)[hits.col.indx])) %>%
+      select(rel.pos, !!sym(p.name), label)
+    # Filter the bottom data to get the position of these labels. 
+    bot.labels <- bot.data %>%
+      filter(!!sym(colnames(bot.data)[hits.col.indx]) %in% hits.label) %>% 
+      mutate(label = !!sym(colnames(bot.data)[hits.col.indx])) %>%
+      select(rel.pos, !!sym(p.name), label) 
+  }
+  
+  # If we just created labels, then add them to the plot
+  if(!missing("top.labels") | !missing("bot.labels")){
     top.plot <- top.plot + 
       geom_label_repel(data = top.labels, aes(label = label), size = 2,
                        segment.size = 0.2, point.padding = 0.2, 
@@ -188,7 +206,7 @@ plot.miami <- function(
                        ylim = c(NA, min(-log10(bot.labels[,p.name]))), 
                        box.padding = 0.5)
   }
-  
+
   # Put the two together
   p <- top.plot + bottom.plot + plot_layout(ncol=1)
 
