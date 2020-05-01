@@ -12,13 +12,14 @@ plot.miami <- function(
   genomewideline = 5e-8,
   suggestiveline = 1e-5, 
   top.n.hits = NULL,
-  hits.col = NULL) {
+  hits.label = NULL) {
   
   # Necessary packages
   require(rlang)
   require(dplyr)
   require(ggplot2)
   require(patchwork)
+  require(checkmate)
   require(ggrepel)
   
   # Check the input 
@@ -117,6 +118,41 @@ plot.miami <- function(
   if(!is.null(genomewideline)){
     top.plot <- top.plot + geom_hline(yintercept = -log10(genomewideline), color = "red", linetype = "solid", size = 0.3)
     bottom.plot <- bottom.plot + geom_hline(yintercept = -log10(genomewideline), color = "red", linetype = "solid", size = 0.3)
+  }
+  
+  # If the user has requested labeling the top n hits: 
+  if(!is.null(top.n.hits)) {
+    # Check that top.n.hits is a positive natural number and
+    # Check that the column name provided for labels is in the df.
+    if(checkCount(top.n.hits) & testNames(hits.label, type = "named", subset.of = colnames(data))){
+      # If the user has given a single column name in "hits.label"
+      if(length(hits.label == 1)){
+        top.labels <- top.data %>%
+          arrange(desc(-log10(!!sym(p.name)))) %>%
+          mutate(label = !!sym(hits.label)) %>%
+          select(rel.pos, !!sym(p.name), label) %>%
+          slice(1:top.n.hits)
+        
+        bot.labels <- bot.data %>%
+          arrange(desc(-log10(!!sym(p.name)))) %>%
+          mutate(label = !!sym(hits.label)) %>%
+          select(rel.pos, !!sym(p.name), label) %>%
+          slice(1:top.n.hits)
+      }
+    }
+    
+    # Add labels to plot 
+    top.plot <- top.plot + geom_label_repel(data = top.labels, aes(label = label), size = 2,
+                                            segment.size = 0.2, point.padding = 0.2, 
+                                            min.segment.length = 0, force = 2, 
+                                            ylim = c(min(-log10(top.labels[,p.name])), NA), 
+                                            box.padding = 0.5)
+    
+    bottom.plot <- bottom.plot + geom_label_repel(data = bot.labels, aes(label = label), size = 2,
+                                                  segment.size = 0.2, point.padding = 0.2, 
+                                                  min.segment.length = 0, force = 2, 
+                                                  ylim = c(NA, min(-log10(bot.labels[,p.name]))), 
+                                                  box.padding = 0.5)
   }
   
   # Put the two together
