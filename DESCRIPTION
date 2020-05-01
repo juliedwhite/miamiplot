@@ -15,3 +15,4 @@ Imports:
     patchwork,
     checkmate,
     ggrepel
+RoxygenNote: 7.1.0
