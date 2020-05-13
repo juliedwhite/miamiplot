@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.miami.R
 \name{ggmiami}
 \alias{ggmiami}
-\title{Miami plot}
+\title{ggmiami: Miami plot}
 \usage{
 ggmiami(
   data,

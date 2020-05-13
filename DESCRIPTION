@@ -14,5 +14,6 @@ Imports:
     ggplot2,
     patchwork,
     checkmate,
-    ggrepel
+    ggrepel,
+    magrittr
 RoxygenNote: 7.1.0
