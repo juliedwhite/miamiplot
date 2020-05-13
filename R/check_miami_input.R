@@ -1,18 +1,18 @@
 # Checking functions
 
-check.miami.input <- function(data, split.by, split.at) {
+check_miami_input <- function(data, split.by, split.at) {
   require(checkmate)
 
   # Establish a new argument check object
   check <- makeAssertCollection()
-  
+
   # Check that data is a dataframe
   assertDataFrame(data, col.names = "named", add = check)
-  
+
   # The user should supply the column name by which they want to split their data using split.by.
-  # For example: beta values, study name, genotype status. 
+  # For example: beta values, study name, genotype status.
   assertNames(split.by, type = "named", subset.of = colnames(data),  add = check)
-  
+
   # The user should supply the point at which they want to split their data using split.at, as an integer or character.
   # For example: if they want positive beta values on top, then split.at = 0
   # For example, if they want "genotyped" SNPs on top, then split.at = "genotyped"
