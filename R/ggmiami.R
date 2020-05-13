@@ -1,5 +1,3 @@
-#' ggmiami
-#'
 #' Create a Miami plot ggplot2 object.
 #'
 #' @param data A data.frame object. Required.
@@ -52,22 +50,17 @@ ggmiami <- function(
   # Check the required input
   check_miami_input(data = data, split.by = split.by, split.at = split.at)
 
-  # Identify column index for chromosome information.
-  chr.indx <- find.col.indx(data = data, col = chr)
+  # Identify column index for chromosome information and check class
+  chr.indx <- find_col_info(data = data, col = chr)
   chr.name <- chr
 
-  # Identify column index for position information
-  pos.indx <- find.col.indx(data = data, col = pos)
+  # Identify column index for position information and check class
+  pos.indx <- find_col_info(data = data, col = pos)
   pos.name <- pos
 
-  # Identify column index for p-value information
-  p.indx <- find.col.indx(data = data, col = p)
+  # Identify column index for p-value information and check class
+  p.indx <- find_col_info(data = data, col = p)
   p.name <- p
-
-  # Test if chromosome, position, pvalue columns are numeric or integer.
-  check.miami.numeric(data = data, col.indx = chr.indx)
-  check.miami.numeric(data = data, col.indx = pos.indx)
-  check.miami.numeric(data = data, col.indx = p.indx)
 
   # To make the plot, we need to know the cumulative position of each probe/snp
     # across the whole genome.
