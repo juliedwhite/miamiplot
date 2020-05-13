@@ -2,7 +2,7 @@
 % Please edit documentation in R/ggmiami.R, R/plot.miami.R
 \name{ggmiami}
 \alias{ggmiami}
-\title{ggmiami}
+\title{Create a Miami plot ggplot2 object.}
 \usage{
 ggmiami(
   data,
@@ -72,8 +72,6 @@ a \code{ggplot2} object
 a \code{ggplot2} object
 }
 \description{
-Create a Miami plot ggplot2 object.
-
 Create a Miami plot ggplot2 object.
 }
 \references{
