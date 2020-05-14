@@ -108,22 +108,27 @@ ggmiami <- function(
   # If the user requests labels:
   if(!is.null(hits.label)){
     # Create the labels for the top and bottom plot
-    top.labels <- make.labels(data = top.data, p.name = p.name,
-                              hits.label = hits.label, top.n.hits = top.n.hits)
-    bot.labels <- make.labels(data = bot.data, p.name = p.name,
-                              hits.label = hits.label, top.n.hits = top.n.hits)
+    top.labels <- make_miami_labels(data = plot.data$top,
+                                    hits.label = hits.label,
+                                    top.n.hits = top.n.hits)
+
+    bot.labels <- make_miami_labels(data = plot.data$bottom,
+                                    hits.label = hits.label,
+                                    top.n.hits = top.n.hits)
 
     # Add to plots
     top.plot <- top.plot +
       ggrepel::geom_label_repel(data = top.labels, aes(label = label), size = 2,
                                 segment.size = 0.2, point.padding = 0.2,
-                                ylim = c(maxp/2, NA), min.segment.length = 0,
+                                ylim = c(plot.data$maxp/2, NA),
+                                min.segment.length = 0,
                                 force = 2, box.padding = 0.5)
 
     bottom.plot <- bottom.plot +
       ggrepel::geom_label_repel(data = bot.labels, aes(label = label), size = 2,
                                 segment.size = 0.2, point.padding = 0.2,
-                                ylim = c(NA, -(maxp/2)), min.segment.length = 0,
+                                ylim = c(NA, -(plot.data$maxp/2)),
+                                min.segment.length = 0,
                                 force = 2, box.padding = 0.5)
   }
 
