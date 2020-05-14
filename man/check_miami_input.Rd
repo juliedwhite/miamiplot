@@ -2,7 +2,7 @@
 % Please edit documentation in R/check_miami_input.R
 \name{check_miami_input}
 \alias{check_miami_input}
-\title{Check input to ggmiami function}
+\title{Check input to miami plot}
 \usage{
 check_miami_input(data, split.by, split.at)
 }
@@ -21,7 +21,7 @@ the values in the \code{split.by} column are equal to \code{split.at}. Required.
 Will return an error message if there are problems.
 }
 \description{
-Check input to ggmiami function
+Check input to miami plot
 }
 \examples{
 # If you would like to put positive beta values in the top of your plot, and

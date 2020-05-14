@@ -1,4 +1,4 @@
-#' Check input to ggmiami function
+#' Check input to miami plot
 #'
 #' @param data A data.frame object. Required.
 #' @param split.by A character vector. The name of the column to use for
