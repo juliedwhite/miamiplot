@@ -63,7 +63,8 @@ ggmiami <- function(
                                 expand = ggplot2::expansion(mult = c(0.02,0))) +
     ggplot2::labs(x = "", y = expression('-log'[10]*'(P)')) +
     ggplot2::theme_classic() +
-    ggplot2::theme(legend.position = "none", axis.title.x = ggplot2::element_blank(),
+    ggplot2::theme(legend.position = "none",
+                   axis.title.x = ggplot2::element_blank(),
                    plot.margin = ggplot2::margin(b=0))
 
   # Create base bottom plot
@@ -79,8 +80,10 @@ ggmiami <- function(
                              expand = ggplot2::expansion(mult = c(0,0.02))) +
     ggplot2::labs(x = "", y = expression('-log'[10]*'(P)')) +
     ggplot2::theme_classic() +
-    ggplot2::theme(legend.position = "none", axis.text.x = ggplot2::element_blank(),
-                   axis.title.x = ggplot2::element_blank(), plot.margin = ggplot2::margin(t=0))
+    ggplot2::theme(legend.position = "none",
+                   axis.text.x = ggplot2::element_blank(),
+                   axis.title.x = ggplot2::element_blank(),
+                   plot.margin = ggplot2::margin(t=0))
 
   # If the user has requested a suggetive line, add:
   if(!is.null(suggestiveline)){
