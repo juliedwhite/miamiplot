@@ -14,7 +14,7 @@ ggmiami(
   genomewideline = 5e-08,
   suggestiveline = 1e-05,
   hits.label = NULL,
-  top.n.hits = NULL
+  top.n.hits = 5
 )
 }
 \arguments{
@@ -51,7 +51,7 @@ to the top N results, though this isn't necessary.
 Defaults to NULL: labels aren't displayed.}
 
 \item{top.n.hits}{How many of the top hits do you want to label? Defaults to
-NULL: the number of labels aren't filtered.}
+5. Set to NULL to turn off this filtering.}
 }
 \value{
 a \code{ggplot2} object
