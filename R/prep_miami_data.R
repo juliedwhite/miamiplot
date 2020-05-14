@@ -13,18 +13,7 @@
 #'   Defaults to "pos"
 #' @param p The name of the column containing your p-value information.
 #'   Defaults to "P"
-#' @param genomewideline Should we draw a genome-wide significance line? Set to
-#'   FALSE if you do not want this line. Defaults to 5e-8, or supply your own number.
-#' @param suggestiveline Should we draw a suggestive significance line? Set to
-#'   FALSE if you do not want this line. Defaults to 1e-5, or supply your own number.
-#' @param hits.label Either the name of the column(s), max. 2, to use for
-#'   automatically labeling n hits, determined using \code{top.n.hits}, or a
-#'   character vector of probes/genes/SNPs to label. If supplying a list of
-#'   genes, it is helpful to also supply \code{top.n.hits} to limit the labels
-#'   to the top N results, though this isn't necessary.
-#'   Defaults to FALSE: labels aren't displayed.
-#' @param top.n.hits How many of the top hits do you want to label? Defaults to
-#'   FALSE: the number of labels aren't filtered.
+#'
 #' @export
 #' @return A list containing the data needed for the top plot, the bottom plot,
 #'   the axes, and the maximum p-value (for sizing the plot)
