@@ -19,7 +19,7 @@ genes, it is helpful to also supply \code{top.n.hits} to limit the labels
 to the top N results, though this isn't necessary.}
 
 \item{top.n.hits}{How many of the top hits do you want to label? Defaults to
-5. Set to NULL to turn off this filtering.}
+5. Set to NULL to turn off this filtering, but this is not recommended.}
 }
 \value{
 A data.frame with
