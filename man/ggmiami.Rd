@@ -13,8 +13,8 @@ ggmiami(
   p = "P",
   genomewideline = 5e-08,
   suggestiveline = 1e-05,
-  hits.label = FALSE,
-  top.n.hits = FALSE,
+  hits.label = NULL,
+  top.n.hits = NULL,
   ...
 )
 }
@@ -39,20 +39,20 @@ Defaults to "pos"}
 Defaults to "P"}
 
 \item{genomewideline}{Should we draw a genome-wide significance line? Set to
-FALSE if you do not want this line. Defaults to 5e-8, or supply your own number.}
+NULL if you do not want this line. Defaults to 5e-8, or supply your own number.}
 
 \item{suggestiveline}{Should we draw a suggestive significance line? Set to
-FALSE if you do not want this line. Defaults to 1e-5, or supply your own number.}
+NULL if you do not want this line. Defaults to 1e-5, or supply your own number.}
 
 \item{hits.label}{Either the name of the column(s), max. 2, to use for
 automatically labeling n hits, determined using \code{top.n.hits}, or a
 character vector of probes/genes/SNPs to label. If supplying a list of
 genes, it is helpful to also supply \code{top.n.hits} to limit the labels
 to the top N results, though this isn't necessary.
-Defaults to FALSE: labels aren't displayed.}
+Defaults to NULL: labels aren't displayed.}
 
 \item{top.n.hits}{How many of the top hits do you want to label? Defaults to
-FALSE: the number of labels aren't filtered.}
+NULL: the number of labels aren't filtered.}
 }
 \value{
 a \code{ggplot2} object

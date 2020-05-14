@@ -14,17 +14,17 @@
 #' @param p The name of the column containing your p-value information.
 #'   Defaults to "P"
 #' @param genomewideline Should we draw a genome-wide significance line? Set to
-#'   FALSE if you do not want this line. Defaults to 5e-8, or supply your own number.
+#'   NULL if you do not want this line. Defaults to 5e-8, or supply your own number.
 #' @param suggestiveline Should we draw a suggestive significance line? Set to
-#'   FALSE if you do not want this line. Defaults to 1e-5, or supply your own number.
+#'   NULL if you do not want this line. Defaults to 1e-5, or supply your own number.
 #' @param hits.label Either the name of the column(s), max. 2, to use for
 #'   automatically labeling n hits, determined using \code{top.n.hits}, or a
 #'   character vector of probes/genes/SNPs to label. If supplying a list of
 #'   genes, it is helpful to also supply \code{top.n.hits} to limit the labels
 #'   to the top N results, though this isn't necessary.
-#'   Defaults to FALSE: labels aren't displayed.
+#'   Defaults to NULL: labels aren't displayed.
 #' @param top.n.hits How many of the top hits do you want to label? Defaults to
-#'   FALSE: the number of labels aren't filtered.
+#'   NULL: the number of labels aren't filtered.
 #' @export
 #' @return a \code{ggplot2} object
 #' @author Julie White
@@ -43,8 +43,8 @@ ggmiami <- function(
   p = "P",
   genomewideline = 5e-8,
   suggestiveline = 1e-5,
-  hits.label = FALSE,
-  top.n.hits = FALSE,
+  hits.label = NULL,
+  top.n.hits = NULL,
   ...) {
 
   # Prepare the data
@@ -84,7 +84,7 @@ ggmiami <- function(
                    axis.title.x = ggplot2::element_blank(), plot.margin = ggplot2::margin(t=0))
 
   # If the user has requested a suggetive line, add:
-  if(!suggestiveline){
+  if(!is.null(suggestiveline)){
     top.plot <- top.plot +
       ggplot2::geom_hline(yintercept = -log10(suggestiveline), color = "blue",
                           linetype = "dashed", size = 0.3)
@@ -94,7 +94,7 @@ ggmiami <- function(
   }
 
   # If the user has requested a genome-wide line, add:
-  if(!genomewideline){
+  if(!is.null(genomewideline)){
     top.plot <- top.plot +
       ggplot2::geom_hline(yintercept = -log10(genomewideline), color = "red",
                           linetype = "solid", size = 0.3)
@@ -104,7 +104,7 @@ ggmiami <- function(
   }
 
   # If the user requests labels:
-  if(hits.label){
+  if(!is.null(hits.label)){
     # Create the labels for the top and bottom plot
     top.labels <- make.labels(data = top.data, p.name = p.name,
                               hits.label = hits.label, top.n.hits = top.n.hits)
