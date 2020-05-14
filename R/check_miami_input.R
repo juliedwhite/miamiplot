@@ -7,7 +7,7 @@
 #'   contain your results where the values in the \code{split.by} column are
 #'   >= \code{split.at}. If character, top plot will contain your results where
 #'   the values in the \code{split.by} column are equal to \code{split.at}. Required.
-#' @export
+#'
 #' @return Will return an error message if there are problems.
 #' @examples
 #' # If you would like to put positive beta values in the top of your plot, and

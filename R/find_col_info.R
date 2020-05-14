@@ -3,7 +3,7 @@
 #' @param data A data.frame object. Required.
 #' @param col An object name or character vector. The name of the column to
 #'   search the data.frame for and check class. Required.
-#' @export
+#'
 #' @return Will return an error message if there are problems. Otherwise returns
 #'   the index of the named column in the dataframe.
 #' @examples
