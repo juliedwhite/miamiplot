@@ -44,8 +44,7 @@ ggmiami <- function(
   genomewideline = 5e-8,
   suggestiveline = 1e-5,
   hits.label = NULL,
-  top.n.hits = NULL,
-  ...) {
+  top.n.hits = NULL) {
 
   # Prepare the data
   plot.data <- prep_miami_data(data = data, split.by = split.by,
@@ -54,9 +53,9 @@ ggmiami <- function(
   # Create plot aestetic elements.
   top.plot <- ggplot2::ggplot(data = plot.data$top,
                               aes(x=.data$rel.pos, y=.data$loggedp)) +
-    ggplot2::geom_point(aes(color=as.factor(.data$chr)), size=0.25, ...) +
+    ggplot2::geom_point(aes(color=as.factor(.data$chr)), size=0.25) +
     ggplot2::scale_color_manual(values = rep(c("black", "grey"),
-                                             nrow(plot.data$axis)), ...) +
+                                             nrow(plot.data$axis))) +
     ggplot2::scale_x_continuous(labels = plot.data$axis$chr,
                                 breaks = plot.data$axis$chr.center,
                                 expand = ggplot2::expansion(mult=0.01)) +
@@ -70,9 +69,9 @@ ggmiami <- function(
   # Create base bottom plot
   bottom.plot <- ggplot2::ggplot(data = plot.data$bottom,
                                  aes(x=.data$rel.pos, y=.data$loggedp)) +
-    ggplot2::geom_point(aes(color=as.factor(.data$chr)), size=0.25, ...) +
+    ggplot2::geom_point(aes(color=as.factor(.data$chr)), size=0.25) +
     ggplot2::scale_color_manual(values = rep(c("black", "grey"),
-                                             nrow(plot.data$axis)), ...) +
+                                             nrow(plot.data$axis))) +
     ggplot2::scale_x_continuous(breaks = plot.data$axis$chr.center,
                                 position = "top",
                                 expand = ggplot2::expansion(mult=0.01)) +

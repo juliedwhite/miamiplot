@@ -14,8 +14,7 @@ ggmiami(
   genomewideline = 5e-08,
   suggestiveline = 1e-05,
   hits.label = NULL,
-  top.n.hits = NULL,
-  ...
+  top.n.hits = NULL
 )
 }
 \arguments{

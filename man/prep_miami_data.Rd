@@ -4,15 +4,7 @@
 \alias{prep_miami_data}
 \title{Prepare data for miami plot}
 \usage{
-prep_miami_data(
-  data,
-  split.by,
-  split.at,
-  chr = "chr",
-  pos = "pos",
-  p = "P",
-  ...
-)
+prep_miami_data(data, split.by, split.at, chr = "chr", pos = "pos", p = "P")
 }
 \arguments{
 \item{data}{A data.frame object. Required.}

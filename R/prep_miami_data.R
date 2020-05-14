@@ -40,8 +40,7 @@ prep_miami_data <- function(
   split.at,
   chr="chr",
   pos="pos",
-  p = "P",
-  ...) {
+  p = "P") {
 
   # Check the required input
   check_miami_input(data = data, split.by = split.by, split.at = split.at)
