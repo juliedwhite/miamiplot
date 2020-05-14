@@ -86,29 +86,26 @@ prep_miami_data <- function(
     top.data <- data %>%
       dplyr::filter(!!rlang::sym(split.by) >= split.at) %>%
       dplyr::mutate(loggedp = -log10(.[,p.indx])) %>%
-      dplyr::rename(chr = as.name(chr.name)) %>%
-      dplyr::select(chr, rel.pos, loggedp)
+      dplyr::rename(chr = as.name(chr.name))
+
     # Create bottom data using numeric info
     bot.data <- data %>%
       dplyr::filter(!!rlang::sym(split.by) < split.at) %>%
       dplyr::mutate(loggedp = -log10(.[,p.indx])) %>%
-      dplyr::rename(chr = as.name(chr.name)) %>%
-      dplyr::select(chr, rel.pos, loggedp)
+      dplyr::rename(chr = as.name(chr.name))
 
   } else if(is.character(split.at)){
     # Create top data using character specified by user
     top.data <- data %>%
       dplyr::filter(!!rlang::sym(split.by) == split.at) %>%
       dplyr::mutate(loggedp = -log10(.[,p.indx])) %>%
-      dplyr::rename(chr = as.name(chr.name)) %>%
-      dplyr::select(chr, rel.pos, loggedp)
+      dplyr::rename(chr = as.name(chr.name))
 
     # Create bottom data using character not specified by user
     bot.data <- data %>%
       dplyr::filter(!!rlang::sym(split.by) != split.at) %>%
       dplyr::mutate(loggedp = -log10(.[,p.indx])) %>%
-      dplyr::rename(chr = as.name(chr.name)) %>%
-      dplyr::select(chr, rel.pos, loggedp)
+      dplyr::rename(chr = as.name(chr.name))
   }
 
   miami_data_list <- list("top" = top.data, "bottom" = bot.data,
