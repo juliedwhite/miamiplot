@@ -24,7 +24,8 @@ find_col_info <- function(data, col) {
     col.indx <- which(colnames(data)==col)
 
     # Check that column is either numeric or integer
-    if (!testMultiClass(data[,col.indx], classes = c("numeric", "integer"))) {
+    if (!checkmate::testMultiClass(data[,col.indx],
+                                   classes = c("numeric", "integer"))) {
       stop(paste0("Your ", colnames(data)[col.indx], " column is of class ",
                   class(data[,col.indx]), ". Please make sure this column is ",
                   "numeric or integer."))
