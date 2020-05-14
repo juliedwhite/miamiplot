@@ -24,7 +24,7 @@
 #'   to the top N results, though this isn't necessary.
 #'   Defaults to NULL: labels aren't displayed.
 #' @param top.n.hits How many of the top hits do you want to label? Defaults to
-#'   NULL: the number of labels aren't filtered.
+#'   5. Set to NULL to turn off this filtering.
 #' @export
 #' @return a \code{ggplot2} object
 #' @author Julie White
@@ -44,13 +44,13 @@ ggmiami <- function(
   genomewideline = 5e-8,
   suggestiveline = 1e-5,
   hits.label = NULL,
-  top.n.hits = NULL) {
+  top.n.hits = 5) {
 
   # Prepare the data
   plot.data <- prep_miami_data(data = data, split.by = split.by,
                                split.at = split.at, chr = chr, pos = pos, p = p)
 
-  # Create plot aestetic elements.
+  # Create base top plot.
   top.plot <- ggplot2::ggplot(data = plot.data$top,
                               aes(x=.data$rel.pos, y=.data$loggedp)) +
     ggplot2::geom_point(aes(color=as.factor(.data$chr)), size=0.25) +
