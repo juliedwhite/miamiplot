@@ -40,8 +40,7 @@ check_miami_input <- function(data, split.by, split.at) {
   # can split on things like genotyping status or numeric p-values.
   if(!checkmate::testCharacter(split.at, len = 1)){
     if(!checkmate::testNumeric(split.at, len = 1)){
-      check$push("split.at must be either character or numeric,
-                            with length = 1")
+      check$push("split.at must be either character or numeric, with length = 1")
     }
   }
   checkmate::reportAssertions(check)
