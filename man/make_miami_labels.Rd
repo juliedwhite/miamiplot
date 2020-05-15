@@ -4,12 +4,12 @@
 \alias{make_miami_labels}
 \title{Make label data.frame for miami plot}
 \usage{
-make_miami_labels(data, p = "loggedp", hits.label, top.n.hits = 5)
+make_miami_labels(data, loggedp = "loggedp", hits.label, top.n.hits = 5)
 }
 \arguments{
 \item{data}{A data.frame object. Required.}
 
-\item{p}{The name of the column containing your logged p-value information.
+\item{loggedp}{The name of the column containing your logged p-value information.
 Defaults to "loggedp," assuming data preparation with `prep_miami_data`}
 
 \item{hits.label}{Either the name of the column(s), max. 2, to use for

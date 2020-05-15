@@ -1,7 +1,7 @@
 #' Make label data.frame for miami plot
 #'
 #' @param data A data.frame object. Required.
-#' @param p The name of the column containing your logged p-value information.
+#' @param loggedp The name of the column containing your logged p-value information.
 #'   Defaults to "loggedp," assuming data preparation with `prep_miami_data`
 #' @param hits.label Either the name of the column(s), max. 2, to use for
 #'   automatically labeling n hits, determined using \code{top.n.hits}, or a
@@ -18,7 +18,7 @@
 #' @importFrom magrittr %>%
 #'
 
-make_miami_labels <- function(data, p = "loggedp", hits.label, top.n.hits = 5){
+make_miami_labels <- function(data, loggedp = "loggedp", hits.label, top.n.hits = 5){
   # If hits.label is a column in the df.
   if(checkmate::testNames(hits.label, type = "named",
                           subset.of = colnames(data))){
@@ -34,7 +34,7 @@ make_miami_labels <- function(data, p = "loggedp", hits.label, top.n.hits = 5){
       label.df <- data %>%
         dplyr::mutate(label = paste0(!!rlang::sym(hits.label[1]), "\n",
                                      !!rlang::sym(hits.label[2]))) %>%
-        dplyr::select(rel.pos, !!rlang::sym(p), label)
+        dplyr::select(rel.pos, !!rlang::sym(loggedp), label)
     }
 
   # If instead the user has given a character vector of which SNPs/probes/genes
@@ -52,13 +52,13 @@ make_miami_labels <- function(data, p = "loggedp", hits.label, top.n.hits = 5){
     label.df <- data %>%
       dplyr::filter(!!rlang::sym(colnames(data)[hits.col.indx]) %in% hits.label) %>%
       dplyr::mutate(label = !!rlang::sym(colnames(data)[hits.col.indx])) %>%
-      dplyr::select(rel.pos, !!rlang::sym(p), label)
+      dplyr::select(rel.pos, !!rlang::sym(loggedp), label)
   }
 
   # If top.n.hits is a number, re-arrange the dataframe and select the top n
   if(checkmate::testCount(top.n.hits)){
     label.df <- label.df %>%
-      dplyr::arrange(desc(!!rlang::sym(p))) %>%
+      dplyr::arrange(desc(!!rlang::sym(loggedp))) %>%
       dplyr::slice(1:top.n.hits)
 
     # Return the df
