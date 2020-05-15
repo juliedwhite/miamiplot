@@ -15,8 +15,8 @@
 #'   Defaults to "P"
 #'
 #' @export
-#' @return A list containing the data needed for the top plot, the bottom plot,
-#'   the axes, and the maximum p-value (for sizing the plot)
+#' @return A list containing the data needed for the top and bottom plots,
+#'   axes, and the maximum p-value (for sizing the plot)
 #' @author Julie White
 #' @references \url{https://github.com/juliedwhite/miamiplot}
 #'
@@ -29,21 +29,21 @@ prep_miami_data <- function(
   split.at,
   chr="chr",
   pos="pos",
-  p = "P") {
+  p = "p") {
 
   # Check the required input
   check_miami_input(data = data, split.by = split.by, split.at = split.at)
 
-  # Identify column index for chromosome information and check class
-  chr.indx <- find_col_info(data = data, col = chr)
+  # Check class of chromosome column
+  find_col_info(data = data, col = chr)
   chr.name <- chr
 
-  # Identify column index for position information and check class
-  pos.indx <- find_col_info(data = data, col = pos)
+  # Check class of position column
+  find_col_info(data = data, col = pos)
   pos.name <- pos
 
-  # Identify column index for p-value information and check class
-  p.indx <- find_col_info(data = data, col = p)
+  # Check class of p-value column
+  find_col_info(data = data, col = p)
   p.name <- p
 
   # To make the plot, we need to know the cumulative position of each probe/snp
@@ -70,42 +70,41 @@ prep_miami_data <- function(
 
   # However, we don't want to print the cumulative position on the x-axis, so we
   # need to provide the chromosome position labels relative to the entire genome.
-  axis.data = data %>%
+  axis.data <- data %>%
     #Group by chromosome
     dplyr::group_by(!!rlang::sym(chr.name)) %>%
     #Find the center of the chromosome
     dplyr::summarize(chr.center=(max(rel.pos) + min(rel.pos))/2)
 
   # To create a symmetric looking plot, calculate the maximum p-value
-  maxp <- ceiling(max(-log10(data[,p.indx])))
+  maxp <- ceiling(max(-log10(data[pos.name])))
+
+  # To make it easier for ourselves later, create function-named chromosome and
+  # logged p-value columns
+  data <- data %>%
+    dplyr::mutate(loggedp = -log10(.[pos.name])) %>%
+    dplyr::rename(chr = as.name(chr.name))
 
   # Depending on what the user has input for split.by and split.at, make top
   # and bottom data.
   if(is.numeric(split.at)){
     # Create top data using numeric info.
     top.data <- data %>%
-      dplyr::filter(!!rlang::sym(split.by) >= split.at) %>%
-      dplyr::mutate(loggedp = -log10(.[,p.indx])) %>%
-      dplyr::rename(chr = as.name(chr.name))
+      dplyr::filter(!!rlang::sym(split.by) >= split.at)
 
     # Create bottom data using numeric info
     bot.data <- data %>%
-      dplyr::filter(!!rlang::sym(split.by) < split.at) %>%
-      dplyr::mutate(loggedp = -log10(.[,p.indx])) %>%
-      dplyr::rename(chr = as.name(chr.name))
+      dplyr::filter(!!rlang::sym(split.by) < split.at)
 
   } else if(is.character(split.at)){
     # Create top data using character specified by user
     top.data <- data %>%
-      dplyr::filter(!!rlang::sym(split.by) == split.at) %>%
-      dplyr::mutate(loggedp = -log10(.[,p.indx])) %>%
-      dplyr::rename(chr = as.name(chr.name))
+      dplyr::filter(!!rlang::sym(split.by) == split.at)
 
-    # Create bottom data using character not specified by user
+    # Create bottom data using whatever is left in that column
     bot.data <- data %>%
-      dplyr::filter(!!rlang::sym(split.by) != split.at) %>%
-      dplyr::mutate(loggedp = -log10(.[,p.indx])) %>%
-      dplyr::rename(chr = as.name(chr.name))
+      dplyr::filter(!!rlang::sym(split.by) != split.at)
+
   }
 
   miami_data_list <- list("top" = top.data, "bottom" = bot.data,

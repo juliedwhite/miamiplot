@@ -4,7 +4,7 @@
 \alias{prep_miami_data}
 \title{Prepare data for miami plot}
 \usage{
-prep_miami_data(data, split.by, split.at, chr = "chr", pos = "pos", p = "P")
+prep_miami_data(data, split.by, split.at, chr = "chr", pos = "pos", p = "p")
 }
 \arguments{
 \item{data}{A data.frame object. Required.}
@@ -27,8 +27,8 @@ Defaults to "pos"}
 Defaults to "P"}
 }
 \value{
-A list containing the data needed for the top plot, the bottom plot,
-  the axes, and the maximum p-value (for sizing the plot)
+A list containing the data needed for the top and bottom plots,
+  axes, and the maximum p-value (for sizing the plot)
 }
 \description{
 Prepare data for miami plot
