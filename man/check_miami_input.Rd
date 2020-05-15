@@ -4,7 +4,7 @@
 \alias{check_miami_input}
 \title{Check input to miami plot}
 \usage{
-check_miami_input(data, split.by, split.at)
+check_miami_input(data, split.by, split.at, chr = "chr", pos = "pos", p = "p")
 }
 \arguments{
 \item{data}{A data.frame object. Required.}
@@ -16,6 +16,15 @@ splitting into top and bottom sections of the Miami plot. Required.}
 contain your results where the values in the \code{split.by} column are
 >= \code{split.at}. If character, top plot will contain your results where
 the values in the \code{split.by} column are equal to \code{split.at}. Required.}
+
+\item{chr}{The name of the column containing your chromosome information.
+Defaults to "chr"}
+
+\item{pos}{The name of the column containing your position information.
+Defaults to "pos"}
+
+\item{p}{The name of the column containing your p-value information.
+Defaults to "p"}
 }
 \value{
 Will return an error message if there are problems.

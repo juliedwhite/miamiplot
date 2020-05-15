@@ -7,6 +7,12 @@
 #'   contain your results where the values in the \code{split.by} column are
 #'   >= \code{split.at}. If character, top plot will contain your results where
 #'   the values in the \code{split.by} column are equal to \code{split.at}. Required.
+#' @param chr The name of the column containing your chromosome information.
+#'   Defaults to "chr"
+#' @param pos The name of the column containing your position information.
+#'   Defaults to "pos"
+#' @param p The name of the column containing your p-value information.
+#'   Defaults to "p"
 #'
 #' @return Will return an error message if there are problems.
 #' @examples
@@ -24,7 +30,8 @@
 #' @references \url{https://github.com/juliedwhite/miamiplot}
 #'
 
-check_miami_input <- function(data, split.by, split.at) {
+check_miami_input <- function(data, split.by, split.at, chr = "chr",
+                              pos = "pos", p = "p") {
 
   # Establish a new argument check object so that we can nicely report errors.
   check <- checkmate::makeAssertCollection()
@@ -43,6 +50,21 @@ check_miami_input <- function(data, split.by, split.at) {
       check$push("split.at must be either character or numeric, with length = 1")
     }
   }
+
+  # Check the chromosome, position, and p-value column.
+  for (i in c(chr, pos, p)){
+    # Column should exist in the data
+    if(!checkmate::testNames(i, type = "named", subset.of = colnames(data))) {
+      stop(paste0("The column ", i, " must be a subset of set {",
+                  paste(colnames(data), collapse = ","), "}."))
+    }
+
+    if(!checkmate::testMultiClass(data[,i], classes = c("numeric", "integer"))) {
+      stop(paste0("Your ", i, " column is of class ", class(data[,i]),
+                  ". Please make sure this column is numeric or integer"))
+    }
+  }
+
   checkmate::reportAssertions(check)
 }
 
