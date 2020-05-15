@@ -32,39 +32,28 @@ prep_miami_data <- function(
   p = "p") {
 
   # Check the required input
-  check_miami_input(data = data, split.by = split.by, split.at = split.at)
-
-  # Check class of chromosome column
-  find_col_info(data = data, col = chr)
-  chr.name <- chr
-
-  # Check class of position column
-  find_col_info(data = data, col = pos)
-  pos.name <- pos
-
-  # Check class of p-value column
-  find_col_info(data = data, col = p)
-  p.name <- p
+  check_miami_input(data = data, split.by = split.by, split.at = split.at,
+                    chr = chr, pos = pos, p = p)
 
   # To make the plot, we need to know the cumulative position of each probe/snp
   # across the whole genome.
   data <- data %>%
     #Group by chromosome
-    dplyr::group_by(!!rlang::sym(chr.name)) %>%
+    dplyr::group_by(!!rlang::sym(chr)) %>%
     # Compute chromosome size
-    dplyr::summarise(chrlength = max(!!rlang::sym(pos.name))) %>%
+    dplyr::summarise(chrlength = max(!!rlang::sym(pos))) %>%
     # Calculate cumulative position of each chromosome
     dplyr::mutate(cumulativechrlength = cumsum(as.numeric(chrlength))-chrlength) %>%
     # Remove chr length column
     dplyr::select(-chrlength) %>%
     # Temporarily add the cumulative length of each chromosome to the initial
     # dataset
-    dplyr::left_join(data, ., by=chr.name) %>%
+    dplyr::left_join(data, ., by=chr) %>%
     # Sort by chr then position
-    dplyr::arrange(!!rlang::sym(chr.name), !!rlang::sym(pos.name)) %>%
+    dplyr::arrange(!!rlang::sym(chr), !!rlang::sym(pos)) %>%
     # Add the position to the cumulative chromosome length to get the position
     # of this probe relative to all other probes
-    dplyr::mutate(rel.pos = !!rlang::sym(pos.name) + cumulativechrlength) %>%
+    dplyr::mutate(rel.pos = !!rlang::sym(pos) + cumulativechrlength) %>%
     # Remove cumulative chr length column
     dplyr::select(-cumulativechrlength)
 
@@ -72,18 +61,18 @@ prep_miami_data <- function(
   # need to provide the chromosome position labels relative to the entire genome.
   axis.data <- data %>%
     #Group by chromosome
-    dplyr::group_by(!!rlang::sym(chr.name)) %>%
+    dplyr::group_by(!!rlang::sym(chr)) %>%
     #Find the center of the chromosome
     dplyr::summarize(chr.center=(max(rel.pos) + min(rel.pos))/2)
 
   # To create a symmetric looking plot, calculate the maximum p-value
-  maxp <- ceiling(max(-log10(data[pos.name])))
+  maxp <- ceiling(max(-log10(data[p])))
 
   # To make it easier for ourselves later, create function-named chromosome and
   # logged p-value columns
   data <- data %>%
-    dplyr::mutate(loggedp = -log10(.[pos.name])) %>%
-    dplyr::rename(chr = as.name(chr.name))
+    dplyr::mutate(loggedp = -log10(!!rlang::sym(p))) %>%
+    dplyr::rename(chr = as.name(chr))
 
   # Depending on what the user has input for split.by and split.at, make top
   # and bottom data.
