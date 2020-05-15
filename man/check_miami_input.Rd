@@ -32,18 +32,6 @@ Will return an error message if there are problems.
 \description{
 Check input to miami plot
 }
-\examples{
-# If you would like to put positive beta values in the top of your plot, and
-# negative values on the bottom.
-check_miami_input(data = df, split.by = "Beta", split.at = 0)
-
-# If you want genotyped SNPs on top, and imputed SNPs on the bottom plot.
-check_miami_input(data = df, split.by = "GenoStatus", split.at = "Genotyped")
-
-# If you want to compare results from two studies, with study A on top.
-check_miami_input(data = df, split.by = "Study", split.at = "A")
-
-}
 \references{
 \url{https://github.com/juliedwhite/miamiplot}
 }
