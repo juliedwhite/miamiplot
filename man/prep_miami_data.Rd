@@ -24,7 +24,7 @@ Defaults to "chr"}
 Defaults to "pos"}
 
 \item{p}{The name of the column containing your p-value information.
-Defaults to "P"}
+Defaults to "p"}
 }
 \value{
 A list containing the data needed for the top and bottom plots,

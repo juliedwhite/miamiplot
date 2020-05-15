@@ -12,7 +12,7 @@
 #' @param pos The name of the column containing your position information.
 #'   Defaults to "pos"
 #' @param p The name of the column containing your p-value information.
-#'   Defaults to "P"
+#'   Defaults to "p"
 #' @param genomewideline Should we draw a genome-wide significance line? Set to
 #'   NULL if you do not want this line. Defaults to 5e-8, or supply your own number.
 #' @param suggestiveline Should we draw a suggestive significance line? Set to
@@ -40,7 +40,7 @@ ggmiami <- function(
   split.at,
   chr="chr",
   pos="pos",
-  p = "P",
+  p = "p",
   genomewideline = 5e-8,
   suggestiveline = 1e-5,
   hits.label = NULL,

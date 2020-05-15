@@ -10,7 +10,7 @@ ggmiami(
   split.at,
   chr = "chr",
   pos = "pos",
-  p = "P",
+  p = "p",
   genomewideline = 5e-08,
   suggestiveline = 1e-05,
   hits.label = NULL,
@@ -35,7 +35,7 @@ Defaults to "chr"}
 Defaults to "pos"}
 
 \item{p}{The name of the column containing your p-value information.
-Defaults to "P"}
+Defaults to "p"}
 
 \item{genomewideline}{Should we draw a genome-wide significance line? Set to
 NULL if you do not want this line. Defaults to 5e-8, or supply your own number.}
