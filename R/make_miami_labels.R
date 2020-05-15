@@ -1,15 +1,16 @@
 #' Make label data.frame for miami plot
 #'
 #' @param data A data.frame object. Required.
+#' @param hits.label.col Either the name of the column(s), max. 2, to use for
+#'   automatically labeling n hits, determined using \code{top.n.hits}, or the
+#'   column where the values you provide in \code{hits.label} can be found. Required.
+#' @param hits.label A user-specified character vector of probes/genes/SNPs
+#'   to label. Defaults to NULL.
+#' @param top.n.hits How many of the top hits do you want to label? Defaults to
+#'   5. Set to NULL to turn off this filtering, but this is not recommended
+#'   because the plot can get cluttered easily.
 #' @param loggedp The name of the column containing your logged p-value information.
 #'   Defaults to "loggedp," assuming data preparation with `prep_miami_data`
-#' @param hits.label Either the name of the column(s), max. 2, to use for
-#'   automatically labeling n hits, determined using \code{top.n.hits}, or a
-#'   character vector of probes/genes/SNPs to label. If supplying a list of
-#'   genes, it is helpful to also supply \code{top.n.hits} to limit the labels
-#'   to the top N results, though this isn't necessary.
-#' @param top.n.hits How many of the top hits do you want to label? Defaults to
-#'   5. Set to NULL to turn off this filtering, but this is not recommended.
 #' @export
 #' @return A data.frame with
 #' @author Julie White
@@ -18,41 +19,65 @@
 #' @importFrom magrittr %>%
 #'
 
-make_miami_labels <- function(data, loggedp = "loggedp", hits.label, top.n.hits = 5){
-  # If hits.label is a column in the df.
-  if(checkmate::testNames(hits.label, type = "named",
-                          subset.of = colnames(data))){
+make_miami_labels <- function(data, hits.label.col, hits.label = NULL,
+                              top.n.hits = 5, loggedp = "loggedp"){
+  # If the user has not requested specific labels
+  if(is.null(hits.label)){
+    # Check that the columns given in hits.label.col are named in the dataframe.
+    checkmate::assertNames(hits.label.col, type = "named",
+                          subset.of = colnames(data))
 
     # If the user has given one column name in "hits.label"
-    if(length(hits.label) == 1){
+    if(length(hits.label.col) == 1){
       label.df <- data %>%
-        dplyr::mutate(label = !!rlang::sym(hits.label)) %>%
+        dplyr::mutate(label = !!rlang::sym(hits.label.col)) %>%
         dplyr::select(rel.pos, !!rlang::sym(p), label)
 
       # Or, if the user has given two column names in "hits.label"
-    } else if(length(hits.label) == 2){
+    } else if(length(hits.label.col) == 2){
       label.df <- data %>%
-        dplyr::mutate(label = paste0(!!rlang::sym(hits.label[1]), "\n",
-                                     !!rlang::sym(hits.label[2]))) %>%
+        dplyr::mutate(label = paste0(!!rlang::sym(hits.label.col[1]), "\n",
+                                     !!rlang::sym(hits.label.col[2]))) %>%
         dplyr::select(rel.pos, !!rlang::sym(loggedp), label)
     }
 
   # If instead the user has given a character vector of which SNPs/probes/genes
-    # to label, this should not be a subset of colnames.
-  } else if(!checkmate::testNames(hits.label, type = "named",
-                                  subset.of = colnames(data))) {
+  # to label
+  } else if(!is.null(hits.label)){
+    # Check that the column given in hits.label.col is named in the dataframe
+    checkmate::assertNames(hits.label.col, type = "named",
+                           subset.of = colnames(data))
 
-    # Find the column where the labels they have given match the data.
-    hits.col.indx <- unname(which(sapply(data, function(x) any(x %in% hits.label))))
-    if(rlang::is_empty(hits.col.indx)){
-      stop(paste0("I cannot find ", hits.label, " in your dataframe."))
+    # and has length = 1, because we can only match one column.
+    if(length(hits.label.col) > 1){
+      stop("You have given two column names in addition to specifying ",
+           "hits.label. This function cannot currently match items in more ",
+           "one column, so please only provide one column where the items in ",
+           "hits.label can be found.")
+    }
+
+    # Check if the column contains special characters, which makes it difficult
+    # to identify and sort the labels.
+    if(!rlang::is_empty(grep('[[:punct:]]', data[,hits.label.col]))){
+      warning("The column {", hits.label.col, "} has special characters in it.",
+              " This function only respects exact matches, so your labels may ",
+              "be incorrect. Please consider removing the special characters ",
+              "from this column or providing exact matches.")
     }
 
     # Filter the data to get the position of these labels
     label.df <- data %>%
-      dplyr::filter(!!rlang::sym(colnames(data)[hits.col.indx]) %in% hits.label) %>%
-      dplyr::mutate(label = !!rlang::sym(colnames(data)[hits.col.indx])) %>%
+      dplyr::filter(!!rlang::sym(hits.label.col) %in% hits.label) %>%
+      dplyr::mutate(label = !!rlang::sym(hits.label.col)) %>%
       dplyr::select(rel.pos, !!rlang::sym(loggedp), label)
+
+    # If label.df is empty, it means we did not find any matches so throw a
+    # warning.
+    if(nrow(label.df) == 0){
+      warning("I could not find any matches for {",
+              paste(hits.label, collapse = ", "), "} in {", hits.label.col,
+              "}. Perhaps there was a typo?")
+    }
   }
 
   # If top.n.hits is a number, re-arrange the dataframe and select the top n

@@ -4,22 +4,30 @@
 \alias{make_miami_labels}
 \title{Make label data.frame for miami plot}
 \usage{
-make_miami_labels(data, loggedp = "loggedp", hits.label, top.n.hits = 5)
+make_miami_labels(
+  data,
+  hits.label.col,
+  hits.label = NULL,
+  top.n.hits = 5,
+  loggedp = "loggedp"
+)
 }
 \arguments{
 \item{data}{A data.frame object. Required.}
 
-\item{loggedp}{The name of the column containing your logged p-value information.
-Defaults to "loggedp," assuming data preparation with `prep_miami_data`}
+\item{hits.label.col}{Either the name of the column(s), max. 2, to use for
+automatically labeling n hits, determined using \code{top.n.hits}, or the
+column where the values you provide in \code{hits.label} can be found. Required.}
 
-\item{hits.label}{Either the name of the column(s), max. 2, to use for
-automatically labeling n hits, determined using \code{top.n.hits}, or a
-character vector of probes/genes/SNPs to label. If supplying a list of
-genes, it is helpful to also supply \code{top.n.hits} to limit the labels
-to the top N results, though this isn't necessary.}
+\item{hits.label}{A user-specified character vector of probes/genes/SNPs
+to label. Defaults to NULL.}
 
 \item{top.n.hits}{How many of the top hits do you want to label? Defaults to
-5. Set to NULL to turn off this filtering, but this is not recommended.}
+5. Set to NULL to turn off this filtering, but this is not recommended
+because the plot can get cluttered easily.}
+
+\item{loggedp}{The name of the column containing your logged p-value information.
+Defaults to "loggedp," assuming data preparation with `prep_miami_data`}
 }
 \value{
 A data.frame with
