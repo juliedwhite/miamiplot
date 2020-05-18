@@ -4,18 +4,19 @@
 \alias{prep_miami_data}
 \title{Prepare data for miami plot}
 \usage{
-prep_miami_data(data, split.by, split.at, chr = "chr", pos = "pos", p = "p")
+prep_miami_data(data, split_by, split_at, chr = "chr", pos = "pos", p = "p")
 }
 \arguments{
 \item{data}{A data.frame object. Required.}
 
-\item{split.by}{A character vector. The name of the column to use for
+\item{split_by}{A character vector. The name of the column to use for
 splitting into top and bottom sections of the Miami plot. Required.}
 
-\item{split.at}{A character or numeric vector. If numeric, the top plot will
-contain your results where the values in the \code{split.by} column are
->= \code{split.at}. If character, top plot will contain your results where
-the values in the \code{split.by} column are equal to \code{split.at}. Required.}
+\item{split_at}{A character or numeric vector. If numeric, the top plot will
+contain your results where the values in the \code{split_by} column are
+>= \code{split_at}. If character, top plot will contain your results where
+the values in the \code{split_by} column are equal to \code{split_at}.
+Required.}
 
 \item{chr}{The name of the column containing your chromosome information.
 Defaults to "chr"}

@@ -6,29 +6,30 @@
 \usage{
 ggmiami(
   data,
-  split.by,
-  split.at,
+  split_by,
+  split_at,
   chr = "chr",
   pos = "pos",
   p = "p",
-  chrcolors = c("black", "grey"),
-  genomewideline = 5e-08,
-  suggestiveline = 1e-05,
-  hits.label.col = NULL,
-  hits.label = NULL,
-  top.n.hits = 5
+  chr_colors = c("black", "grey"),
+  genome_line = 5e-08,
+  suggestive_line = 1e-05,
+  hits_label_col = NULL,
+  hits_label = NULL,
+  top_n_hits = 5
 )
 }
 \arguments{
 \item{data}{A data.frame object. Required.}
 
-\item{split.by}{A character vector. The name of the column to use for
+\item{split_by}{A character vector. The name of the column to use for
 splitting into top and bottom sections of the Miami plot. Required.}
 
-\item{split.at}{A character or numeric vector. If numeric, the top plot will
-contain your results where the values in the \code{split.by} column are
->= \code{split.at}. If character, top plot will contain your results where
-the values in the \code{split.by} column are equal to \code{split.at}. Required.}
+\item{split_at}{A character or numeric vector. If numeric, the top plot will
+contain your results where the values in the \code{split_by} column are
+>= \code{split_at}. If character, top plot will contain your results where
+the values in the \code{split_by} column are equal to \code{split_at}.
+Required.}
 
 \item{chr}{The name of the column containing your chromosome information.
 Defaults to "chr"}
@@ -39,27 +40,29 @@ Defaults to "pos"}
 \item{p}{The name of the column containing your p-value information.
 Defaults to "p"}
 
-\item{chrcolors}{Either a vector of two colors to alternate across chromosomes
-or a vector of colors to use for coloring chromosomes, with length equal to
-the number of chromosomes being plotted. Defaults to alternating black and
-grey.}
+\item{chr_colors}{Either a vector of two colors to alternate across
+chromosomes or a vector of colors to use for coloring chromosomes, with
+length equal to the number of chromosomes being plotted. Defaults to
+alternating black and grey.}
 
-\item{genomewideline}{Should we draw a genome-wide significance line? Set to
-NULL if you do not want this line. Defaults to 5e-8, or supply your own number.}
+\item{genome_line}{Should we draw a genome-wide significance line? Set to
+NULL if you do not want this line. Defaults to 5e-8, or supply your own
+number.}
 
-\item{suggestiveline}{Should we draw a suggestive significance line? Set to
-NULL if you do not want this line. Defaults to 1e-5, or supply your own number.}
+\item{suggestive_line}{Should we draw a suggestive significance line? Set to
+NULL if you do not want this line. Defaults to 1e-5, or supply your own
+number.}
 
-\item{hits.label.col}{Either the name of the column(s), max = 2, to use for
-automatically labeling n hits, determined using \code{top.n.hits}, or the
-column where the values you provide in \code{hits.label} can be found.
-Defaults to NULL: labels aren't displayed.}
-
-\item{hits.label}{A user-specified character vector of probes/genes/SNPs
+\item{hits_label}{A user-specified character vector of probes/genes/SNPs
 to label. Defaults to NULL.}
 
-\item{top.n.hits}{How many of the top hits do you want to label? Defaults to
+\item{top_n_hits}{How many of the top hits do you want to label? Defaults to
 5. Set to NULL to turn off this filtering.}
+
+\item{hits_labe_lcol}{Either the name of the column(s), max = 2, to use for
+automatically labeling n hits, determined using \code{top_n_hits}, or the
+column where the values you provide in \code{hits_label} can be found.
+Defaults to NULL: labels aren't displayed.}
 }
 \value{
 a \code{ggplot2} object

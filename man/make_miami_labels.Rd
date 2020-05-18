@@ -6,33 +6,35 @@
 \usage{
 make_miami_labels(
   data,
-  hits.label.col,
-  hits.label = NULL,
-  top.n.hits = 5,
+  hits_label_col,
+  hits_label = NULL,
+  top_n_hits = 5,
   loggedp = "loggedp",
-  rel.pos = "rel.pos"
+  rel_pos = "rel_pos"
 )
 }
 \arguments{
 \item{data}{A data.frame object. Required.}
 
-\item{hits.label.col}{Either the name of the column(s), max = 2, to use for
-automatically labeling n hits, determined using \code{top.n.hits}, or the
-column where the values you provide in \code{hits.label} can be found. Required.}
+\item{hits_label_col}{Either the name of the column(s), max = 2, to use for
+automatically labeling n hits, determined using \code{top_n_hits}, or the
+column where the values you provide in \code{hits_label} can be found.
+Required.}
 
-\item{hits.label}{A user-specified character vector of probes/genes/SNPs
+\item{hits_label}{A user-specified character vector of probes/genes/SNPs
 to label. Defaults to NULL.}
 
-\item{top.n.hits}{How many of the top hits do you want to label? Defaults to
+\item{top_n_hits}{How many of the top hits do you want to label? Defaults to
 5. Set to NULL to turn off this filtering, but this is not recommended
 because the plot can get cluttered easily.}
 
-\item{loggedp}{The name of the column containing your logged p-value information.
-Defaults to "loggedp," assuming data preparation with \code{prep_miami_data}}
+\item{loggedp}{The name of the column containing your logged p-value
+information. Defaults to "loggedp," assuming data preparation with
+\code{prep_miami_data}}
 
-\item{rel.pos}{The name of the column containing the positon of each
+\item{rel_pos}{The name of the column containing the positon of each
 SNP/probe relative to all other SNPs/probes in the genome. Defaults to
-"rel.pos," assuming data preparation with \code{prep_miami_data}.}
+"rel_pos," assuming data preparation with \code{prep_miami_data}.}
 }
 \value{
 A data.frame with three columns: relative position, logged p-value,

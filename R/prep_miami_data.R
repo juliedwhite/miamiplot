@@ -1,12 +1,13 @@
 #' Prepare data for miami plot
 #'
 #' @param data A data.frame object. Required.
-#' @param split.by A character vector. The name of the column to use for
+#' @param split_by A character vector. The name of the column to use for
 #'   splitting into top and bottom sections of the Miami plot. Required.
-#' @param split.at A character or numeric vector. If numeric, the top plot will
-#'   contain your results where the values in the \code{split.by} column are
-#'   >= \code{split.at}. If character, top plot will contain your results where
-#'   the values in the \code{split.by} column are equal to \code{split.at}. Required.
+#' @param split_at A character or numeric vector. If numeric, the top plot will
+#'   contain your results where the values in the \code{split_by} column are
+#'   >= \code{split_at}. If character, top plot will contain your results where
+#'   the values in the \code{split_by} column are equal to \code{split_at}.
+#'   Required.
 #' @param chr The name of the column containing your chromosome information.
 #'   Defaults to "chr"
 #' @param pos The name of the column containing your position information.
@@ -24,14 +25,14 @@
 
 prep_miami_data <- function(
   data,
-  split.by,
-  split.at,
-  chr="chr",
-  pos="pos",
-  p = "p") {
+  split_by,
+  split_at,
+  chr = "chr",
+  pos = "pos",
+  p  =  "p") {
 
   # Check the required input
-  check_miami_input(data = data, split.by = split.by, split.at = split.at,
+  check_miami_input(data = data, split_by = split_by, split_at = split_at,
                     chr = chr, pos = pos, p = p)
 
   # To make the plot, we need to know the cumulative position of each probe/snp
@@ -42,27 +43,29 @@ prep_miami_data <- function(
     # Compute chromosome size
     dplyr::summarise(chrlength = max(!!rlang::sym(pos))) %>%
     # Calculate cumulative position of each chromosome
-    dplyr::mutate(cumulativechrlength = cumsum(as.numeric(chrlength))-chrlength) %>%
+    dplyr::mutate(cumulativechrlength = cumsum(as.numeric(chrlength)) -
+                    chrlength) %>%
     # Remove chr length column
     dplyr::select(-chrlength) %>%
     # Temporarily add the cumulative length of each chromosome to the initial
     # dataset
-    dplyr::left_join(data, ., by=chr) %>%
+    dplyr::left_join(data, ., by = chr) %>%
     # Sort by chr then position
     dplyr::arrange(!!rlang::sym(chr), !!rlang::sym(pos)) %>%
     # Add the position to the cumulative chromosome length to get the position
     # of this probe relative to all other probes
-    dplyr::mutate(rel.pos = !!rlang::sym(pos) + cumulativechrlength) %>%
+    dplyr::mutate(rel_pos = !!rlang::sym(pos) + cumulativechrlength) %>%
     # Remove cumulative chr length column
     dplyr::select(-cumulativechrlength)
 
   # However, we don't want to print the cumulative position on the x-axis, so we
-  # need to provide the chromosome position labels relative to the entire genome.
-  axis.data <- data %>%
+  # need to provide the chromosome position labels relative to the entire
+  # genome.
+  axis_data <- data %>%
     #Group by chromosome
     dplyr::group_by(!!rlang::sym(chr)) %>%
     #Find the center of the chromosome
-    dplyr::summarize(chr.center=(max(rel.pos) + min(rel.pos))/2)
+    dplyr::summarize(chr_center = (max(rel_pos) + min(rel_pos)) / 2)
 
   # To create a symmetric looking plot, calculate the maximum p-value
   maxp <- ceiling(max(-log10(data[p])))
@@ -73,29 +76,29 @@ prep_miami_data <- function(
     dplyr::mutate(loggedp = -log10(!!rlang::sym(p))) %>%
     dplyr::rename(chr = as.name(chr))
 
-  # Depending on what the user has input for split.by and split.at, make top
+  # Depending on what the user has input for split_by and split_at, make top
   # and bottom data.
-  if(is.numeric(split.at)){
+  if (is.numeric(split_at)) {
     # Create top data using numeric info.
-    top.data <- data %>%
-      dplyr::filter(!!rlang::sym(split.by) >= split.at)
+    top_data <- data %>%
+      dplyr::filter(!!rlang::sym(split_by) >= split_at)
 
     # Create bottom data using numeric info
-    bot.data <- data %>%
-      dplyr::filter(!!rlang::sym(split.by) < split.at)
+    bot_data <- data %>%
+      dplyr::filter(!!rlang::sym(split_by) < split_at)
 
-  } else if(is.character(split.at)){
+  } else if (is.character(split_at)) {
     # Create top data using character specified by user
-    top.data <- data %>%
-      dplyr::filter(!!rlang::sym(split.by) == split.at)
+    top_data <- data %>%
+      dplyr::filter(!!rlang::sym(split_by) == split_at)
 
     # Create bottom data using whatever is left in that column
-    bot.data <- data %>%
-      dplyr::filter(!!rlang::sym(split.by) != split.at)
+    bot_data <- data %>%
+      dplyr::filter(!!rlang::sym(split_by) != split_at)
 
   }
 
-  miami_data_list <- list("top" = top.data, "bottom" = bot.data,
-                          "axis" = axis.data, "maxp" = maxp)
+  miami_data_list <- list("top" = top_data, "bottom" = bot_data,
+                          "axis" = axis_data, "maxp" = maxp)
   return(miami_data_list)
 }
