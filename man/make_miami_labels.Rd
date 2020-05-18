@@ -9,7 +9,8 @@ make_miami_labels(
   hits.label.col,
   hits.label = NULL,
   top.n.hits = 5,
-  loggedp = "loggedp"
+  loggedp = "loggedp",
+  rel.pos = "rel.pos"
 )
 }
 \arguments{
@@ -28,9 +29,14 @@ because the plot can get cluttered easily.}
 
 \item{loggedp}{The name of the column containing your logged p-value information.
 Defaults to "loggedp," assuming data preparation with `prep_miami_data`}
+
+\item{rel.pos}{The name of the column containing the positon of each
+SNP/probe relative to all other SNPs/probes in the genome. Defaults to
+"rel.pos," assuming data preparation with `prep_miami_data`}
 }
 \value{
-A data.frame with
+A data.frame with three columns: relative position, logged p-value,
+  and the label to add to the miami plot.
 }
 \description{
 Make label data.frame for miami plot

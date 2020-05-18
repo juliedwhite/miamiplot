@@ -11,8 +11,12 @@
 #'   because the plot can get cluttered easily.
 #' @param loggedp The name of the column containing your logged p-value information.
 #'   Defaults to "loggedp," assuming data preparation with `prep_miami_data`
+#' @param rel.pos The name of the column containing the positon of each
+#'   SNP/probe relative to all other SNPs/probes in the genome. Defaults to
+#'   "rel.pos," assuming data preparation with `prep_miami_data`
 #' @export
-#' @return A data.frame with
+#' @return A data.frame with three columns: relative position, logged p-value,
+#'   and the label to add to the miami plot.
 #' @author Julie White
 #' @references \url{https://github.com/juliedwhite/miamiplot}
 #'
@@ -20,7 +24,8 @@
 #'
 
 make_miami_labels <- function(data, hits.label.col, hits.label = NULL,
-                              top.n.hits = 5, loggedp = "loggedp"){
+                              top.n.hits = 5, loggedp = "loggedp",
+                              rel.pos = "rel.pos"){
   # If the user has not requested specific labels
   if(is.null(hits.label)){
     # Check that the columns given in hits.label.col are named in the dataframe.
@@ -31,14 +36,14 @@ make_miami_labels <- function(data, hits.label.col, hits.label = NULL,
     if(length(hits.label.col) == 1){
       label.df <- data %>%
         dplyr::mutate(label = !!rlang::sym(hits.label.col)) %>%
-        dplyr::select(rel.pos, !!rlang::sym(p), label)
+        dplyr::select(!!rlang::sym(rel.pos), !!rlang::sym(loggedp), label)
 
       # Or, if the user has given two column names in "hits.label"
     } else if(length(hits.label.col) == 2){
       label.df <- data %>%
         dplyr::mutate(label = paste0(!!rlang::sym(hits.label.col[1]), "\n",
                                      !!rlang::sym(hits.label.col[2]))) %>%
-        dplyr::select(rel.pos, !!rlang::sym(loggedp), label)
+        dplyr::select(!!rlang::sym(rel.pos), !!rlang::sym(loggedp), label)
     }
 
   # If instead the user has given a character vector of which SNPs/probes/genes
@@ -69,7 +74,7 @@ make_miami_labels <- function(data, hits.label.col, hits.label = NULL,
     label.df <- data %>%
       dplyr::filter(!!rlang::sym(hits.label.col) %in% hits.label) %>%
       dplyr::mutate(label = !!rlang::sym(hits.label.col)) %>%
-      dplyr::select(rel.pos, !!rlang::sym(loggedp), label)
+      dplyr::select(!!rlang::sym(rel.pos), !!rlang::sym(loggedp), label)
 
     # If label.df is empty, it means we did not find any matches so throw a
     # warning.
