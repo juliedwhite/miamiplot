@@ -13,6 +13,10 @@
 #'   Defaults to "pos"
 #' @param p The name of the column containing your p-value information.
 #'   Defaults to "p"
+#' @param chrcolors Either a vector of two colors to alternate across chromosomes
+#'   or a vector of colors to use for coloring chromosomes, with length equal to
+#'   the number of chromosomes being plotted. Defaults to alternating black and
+#'   grey.
 #' @param genomewideline Should we draw a genome-wide significance line? Set to
 #'   NULL if you do not want this line. Defaults to 5e-8, or supply your own number.
 #' @param suggestiveline Should we draw a suggestive significance line? Set to
@@ -41,6 +45,7 @@ ggmiami <- function(
   chr="chr",
   pos="pos",
   p = "p",
+  chrcolors = c("black", "grey"),
   genomewideline = 5e-8,
   suggestiveline = 1e-5,
   hits.label.col = NULL,
@@ -51,12 +56,21 @@ ggmiami <- function(
   plot.data <- prep_miami_data(data = data, split.by = split.by,
                                split.at = split.at, chr = chr, pos = pos, p = p)
 
+  # Prepare the colors
+  if(length(chrcolors) == 2){
+    chrcolors <- rep(chrcolors, length.out = nrow(plot.data$axis))
+  } else if (length(chrcolors) == nrow(plot.data$axis)){
+    chrcolors <- chrcolors
+  } else {
+    stop("The number of colors specified in {chrcolors} does not match the
+         number of chromosomes to be displayed.")
+  }
+
   # Create base top plot.
   top.plot <- ggplot2::ggplot(data = plot.data$top,
                               aes(x=.data$rel.pos, y=.data$loggedp)) +
     ggplot2::geom_point(aes(color=as.factor(.data$chr)), size=0.25) +
-    ggplot2::scale_color_manual(values = rep(c("black", "grey"),
-                                             nrow(plot.data$axis))) +
+    ggplot2::scale_color_manual(values = chrcolors) +
     ggplot2::scale_x_continuous(labels = plot.data$axis$chr,
                                 breaks = plot.data$axis$chr.center,
                                 expand = ggplot2::expansion(mult=0.01)) +
@@ -72,8 +86,7 @@ ggmiami <- function(
   bottom.plot <- ggplot2::ggplot(data = plot.data$bottom,
                                  aes(x=.data$rel.pos, y=.data$loggedp)) +
     ggplot2::geom_point(aes(color=as.factor(.data$chr)), size=0.25) +
-    ggplot2::scale_color_manual(values = rep(c("black", "grey"),
-                                             nrow(plot.data$axis))) +
+    ggplot2::scale_color_manual(values = chrcolors) +
     ggplot2::scale_x_continuous(breaks = plot.data$axis$chr.center,
                                 position = "top",
                                 expand = ggplot2::expansion(mult=0.01)) +
@@ -90,20 +103,20 @@ ggmiami <- function(
   if(!is.null(suggestiveline)){
     top.plot <- top.plot +
       ggplot2::geom_hline(yintercept = -log10(suggestiveline), color = "blue",
-                          linetype = "dashed", size = 0.3)
+                          linetype = "solid", size = 0.3)
     bottom.plot <- bottom.plot +
       ggplot2::geom_hline(yintercept = -log10(suggestiveline),color = "blue",
-                          linetype = "dashed", size = 0.3)
+                          linetype = "solid", size = 0.3)
   }
 
   # If the user has requested a genome-wide line, add:
   if(!is.null(genomewideline)){
     top.plot <- top.plot +
       ggplot2::geom_hline(yintercept = -log10(genomewideline), color = "red",
-                          linetype = "solid", size = 0.3)
+                          linetype = "dashed", size = 0.3)
     bottom.plot <- bottom.plot +
       ggplot2::geom_hline(yintercept = -log10(genomewideline), color = "red",
-                          linetype = "solid", size = 0.3)
+                          linetype = "dashed", size = 0.3)
   }
 
   # If the user requests labels:
