@@ -13,7 +13,6 @@
 #'   Defaults to "pos"
 #' @param p The name of the column containing your p-value information.
 #'   Defaults to "p"
-#'
 #' @export
 #' @return A list containing the data needed for the top and bottom plots,
 #'   axes, and the maximum p-value (for sizing the plot)
