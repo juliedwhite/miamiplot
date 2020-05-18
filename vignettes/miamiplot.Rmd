@@ -1,5 +1,7 @@
 ---
 title: "miamiplot"
+author: "Julie White"
+date: "` r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{miamiplot}
@@ -17,3 +19,26 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(miamiplot)
 ```
+
+This document acts as a tutorial for using the miamiplot package to create Miami
+plots for GWAS or EWAS results. Use `?FunctionName` in the R console to get the 
+complete documentation of a given function.
+
+Get data
+```{r}
+sourceurl <- "https://www.dropbox.com/s/zmivpo0b9s0acka/102250.gwas.imputed_v3.both_sexes.tsv.bgz?dl=0"
+tmp <- tempfile()
+
+download.file(sourceurl,tmp)
+##
+sweet_gwas <- read.csv(
+  gzfile(tmp),
+  sep="\t",
+  header=TRUE,
+  stringsAsFactors=FALSE)
+```
+
+```{r}
+sweet_gwas <- fread("https://www.dropbox.com/s/zmivpo0b9s0acka/102250.gwas.imputed_v3.both_sexes.tsv.bgz?dl=0")
+```
+
