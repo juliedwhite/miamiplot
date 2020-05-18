@@ -17,12 +17,12 @@
 #'   NULL if you do not want this line. Defaults to 5e-8, or supply your own number.
 #' @param suggestiveline Should we draw a suggestive significance line? Set to
 #'   NULL if you do not want this line. Defaults to 1e-5, or supply your own number.
-#' @param hits.label Either the name of the column(s), max. 2, to use for
-#'   automatically labeling n hits, determined using \code{top.n.hits}, or a
-#'   character vector of probes/genes/SNPs to label. If supplying a list of
-#'   genes, it is helpful to also supply \code{top.n.hits} to limit the labels
-#'   to the top N results, though this isn't necessary.
+#' @param hits.label.col Either the name of the column(s), max = 2, to use for
+#'   automatically labeling n hits, determined using \code{top.n.hits}, or the
+#'   column where the values you provide in \code{hits.label} can be found.
 #'   Defaults to NULL: labels aren't displayed.
+#' @param hits.label A user-specified character vector of probes/genes/SNPs
+#'   to label. Defaults to NULL.
 #' @param top.n.hits How many of the top hits do you want to label? Defaults to
 #'   5. Set to NULL to turn off this filtering.
 #' @export
@@ -43,6 +43,7 @@ ggmiami <- function(
   p = "p",
   genomewideline = 5e-8,
   suggestiveline = 1e-5,
+  hits.label.col = NULL,
   hits.label = NULL,
   top.n.hits = 5) {
 
@@ -109,10 +110,12 @@ ggmiami <- function(
   if(!is.null(hits.label)){
     # Create the labels for the top and bottom plot
     top.labels <- make_miami_labels(data = plot.data$top,
+                                    hits.label.col = hits.label.col,
                                     hits.label = hits.label,
                                     top.n.hits = top.n.hits)
 
     bot.labels <- make_miami_labels(data = plot.data$bottom,
+                                    hits.label.col = hits.label.col,
                                     hits.label = hits.label,
                                     top.n.hits = top.n.hits)
 
