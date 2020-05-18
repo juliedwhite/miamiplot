@@ -2,10 +2,14 @@ Package: miamiplot
 Type: Package
 Title: Create a ggplot2 miami plot
 Version: 0.1.0
-Authors@R: person(given = "Julie", family = "White", email = "julie.white@nih.gov", role = c("aut", "cre"))
-Description: This package can be used to create a Miami plot in the form of a 
-    ggplot2 object. Users can choose significance lines, colors, and labels. 
-License: NA
+Authors@R: person(given = "Julie", family = "White", 
+    email = "julie.white@nih.gov", role = c("aut", "cre"))
+Description: This package can be used to create a Miami plot, with the 
+    chromosome labels bisecting the middle of the plot. The output is a ggplot2
+    object. Users can specify which data they want plotted on top vs. bottom
+    , whether to display significance line(s), what colors to give chromosomes,
+    and what points to label. 
+License: GPL-2
 Encoding: UTF-8
 LazyData: true
 Imports: 
@@ -17,3 +21,7 @@ Imports:
     ggrepel,
     magrittr
 RoxygenNote: 7.1.0
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
