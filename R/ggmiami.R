@@ -120,7 +120,7 @@ ggmiami <- function(
   }
 
   # If the user requests labels:
-  if(!is.null(hits.label)){
+  if(!is.null(hits.label.col)){
     # Create the labels for the top and bottom plot
     top.labels <- make_miami_labels(data = plot.data$top,
                                     hits.label.col = hits.label.col,
