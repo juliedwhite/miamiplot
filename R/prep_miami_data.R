@@ -14,6 +14,10 @@
 #'   Defaults to "pos"
 #' @param p The name of the column containing your p-value information.
 #'   Defaults to "p"
+#' @examples
+#'   To create plot data where results are split with positive beta values on
+#'   top and negative beta values on bottom:
+#'     plot_data <- prep_miami_data(data = df, split_by = "Beta", split_at = 0)
 #' @export
 #' @return A list containing the data needed for the top and bottom plots,
 #'   axes, and the maximum p-value (for sizing the plot)
@@ -73,7 +77,7 @@ prep_miami_data <- function(
   # To make it easier for ourselves later, create function-named chromosome and
   # logged p-value columns
   data <- data %>%
-    dplyr::mutate(loggedp = -log10(!!rlang::sym(p))) %>%
+    dplyr::mutate(logged_p = -log10(!!rlang::sym(p))) %>%
     dplyr::rename(chr = as.name(chr))
 
   # Depending on what the user has input for split_by and split_at, make top

@@ -34,6 +34,9 @@ If no problems, executes silently. Will return an error message if
 \description{
 Check input to miami plot
 }
+\examples{
+check_miami_input(data = df, split_by = "beta", split_at = 0)
+}
 \references{
 \url{https://github.com/juliedwhite/miamiplot}
 }

@@ -34,6 +34,11 @@ A list containing the data needed for the top and bottom plots,
 \description{
 Prepare data for miami plot
 }
+\examples{
+  To create plot data where results are split with positive beta values on
+  top and negative beta values on bottom:
+    plot_data <- prep_miami_data(data = df, split_by = "Beta", split_at = 0)
+}
 \references{
 \url{https://github.com/juliedwhite/miamiplot}
 }

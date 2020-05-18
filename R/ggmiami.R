@@ -32,6 +32,36 @@
 #'   to label. Defaults to NULL.
 #' @param top_n_hits How many of the top hits do you want to label? Defaults to
 #'   5. Set to NULL to turn off this filtering.
+#' @examples
+#'   If you want to put SNPs with positive beta values on top and netative beta
+#'   values on the bottom:
+#'   ggmiami(data = df, split_by = "beta", split_at = 0)
+#'
+#'   If you want to put results from study A on top and study B on bottom:
+#'   ggmiami(data = df, split_by = "study", split_at = "A")
+#'
+#'   If you want to add a genome wide line at 9e-8, instead of 5e-8:
+#'   ggmiami(data = df, split_by = "study", split_at = "A", genome_line = 9e-8)
+#'
+#'   If you want to label the top 5 hits with the SNP and gene name:
+#'   ggmiami(data = df, split_by = "study", split_at = "A",
+#'           hits_label_col = c("SNP", "Gene"))
+#'
+#'   If you want to label the top 10 hits from the AHRR, TBX15, and RARA genes:
+#'   ggmiami(data = df, split_by = "study", split_at = "A",
+#'           hits_label_col = "Gene", hits_label = c("AHRR", "TBX15", "RARA"),
+#'           top_n_hits = 10)
+#'
+#'   When labeling, the items in hits_label must all come from a single column.
+#'   Specifying multiple columns will return an error.
+#'
+#'   \dontrun{
+#'   ggmiami(data = df, split_by = "study", split_at = "A",
+#'           hits_label_col = c("chr", Gene"),
+#'           hits_label = c("1", AHRR", "2", "TBX15", "RARA"),
+#'           top_n_hits = 10)
+#'   }
+#'
 #' @export
 #' @return a \code{ggplot2} object
 #' @author Julie White
@@ -71,7 +101,7 @@ ggmiami <- function(
 
   # Create base top plot.
   top_plot <- ggplot2::ggplot(data = plot_data$top,
-                              aes(x = .data$rel_pos, y = .data$loggedp)) +
+                              aes(x = .data$rel_pos, y = .data$logged_p)) +
     ggplot2::geom_point(aes(color = as.factor(.data$chr)), size = 0.25) +
     ggplot2::scale_color_manual(values = chr_colors) +
     ggplot2::scale_x_continuous(labels = plot_data$axis$chr,
@@ -88,7 +118,7 @@ ggmiami <- function(
 
   # Create base bottom plot
   bottom_plot <- ggplot2::ggplot(data = plot_data$bottom,
-                                 aes(x = .data$rel_pos, y = .data$loggedp)) +
+                                 aes(x = .data$rel_pos, y = .data$logged_p)) +
     ggplot2::geom_point(aes(color = as.factor(.data$chr)), size = 0.25) +
     ggplot2::scale_color_manual(values = chr_colors) +
     ggplot2::scale_x_continuous(breaks = plot_data$axis$chr_center,

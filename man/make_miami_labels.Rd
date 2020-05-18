@@ -9,7 +9,7 @@ make_miami_labels(
   hits_label_col,
   hits_label = NULL,
   top_n_hits = 5,
-  loggedp = "loggedp",
+  logged_p = "logged_p",
   rel_pos = "rel_pos"
 )
 }
@@ -28,8 +28,8 @@ to label. Defaults to NULL.}
 5. Set to NULL to turn off this filtering, but this is not recommended
 because the plot can get cluttered easily.}
 
-\item{loggedp}{The name of the column containing your logged p-value
-information. Defaults to "loggedp," assuming data preparation with
+\item{logged_p}{The name of the column containing your logged p-value
+information. Defaults to "logged_p," assuming data preparation with
 \code{prep_miami_data}}
 
 \item{rel_pos}{The name of the column containing the positon of each
@@ -42,6 +42,34 @@ A data.frame with three columns: relative position, logged p-value,
 }
 \description{
 Make label data.frame for miami plot
+}
+\examples{
+ If you have already run prep_miami_data and want to label the top 5 hits
+ with SNP and gene name:
+   top_labels <- make_miami_labels(data = plot_data$top,
+                                   hits_label_col = c("SNP", "Gene"))
+
+ If you have already run prep_miami_data and want to label the top 10 hits
+ from the AHRR, TBX15, and RARA genes:
+   top_labels <- make_miami_labels(data = plot_data$top,
+                                   hits_label_col = "Gene",
+                                   hits_label = c("AHRR", "TBX15", "RARA"),
+                                   top_n_hits = 10)
+
+ When labeling, the items in hits_label must all come from a single column.
+ Specifying multiple columns will return an error.
+
+ \dontrun{
+ ggmiami(data = df, split_by = "study", split_at = "A",
+         hits_label_col = c("chr", Gene"),
+         hits_label = c("1", AHRR", "2", "TBX15", "RARA"), top_n_hits = 10)
+ }
+
+ If you have not run prep_miami_data:
+   labels <- make_miami_labels(datat = df, hits_label_col = c("SNP", "pos"),
+                               logged_p = "logp",
+                               rel_pos = "relative_SNP_position")
+
 }
 \references{
 \url{https://github.com/juliedwhite/miamiplot}
