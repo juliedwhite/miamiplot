@@ -1,7 +1,7 @@
 #' Make label data.frame for miami plot
 #'
 #' @param data A data.frame object. Required.
-#' @param hits.label.col Either the name of the column(s), max. 2, to use for
+#' @param hits.label.col Either the name of the column(s), max = 2, to use for
 #'   automatically labeling n hits, determined using \code{top.n.hits}, or the
 #'   column where the values you provide in \code{hits.label} can be found. Required.
 #' @param hits.label A user-specified character vector of probes/genes/SNPs
@@ -10,13 +10,13 @@
 #'   5. Set to NULL to turn off this filtering, but this is not recommended
 #'   because the plot can get cluttered easily.
 #' @param loggedp The name of the column containing your logged p-value information.
-#'   Defaults to "loggedp," assuming data preparation with `prep_miami_data`
+#'   Defaults to "loggedp," assuming data preparation with \code{prep_miami_data}
 #' @param rel.pos The name of the column containing the positon of each
 #'   SNP/probe relative to all other SNPs/probes in the genome. Defaults to
-#'   "rel.pos," assuming data preparation with `prep_miami_data`
+#'   "rel.pos," assuming data preparation with \code{prep_miami_data}.
 #' @export
 #' @return A data.frame with three columns: relative position, logged p-value,
-#'   and the label to add to the miami plot.
+#'   and the label to add to the miami plot. Designed to be used with ggrepel.
 #' @author Julie White
 #' @references \url{https://github.com/juliedwhite/miamiplot}
 #'

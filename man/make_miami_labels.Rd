@@ -16,7 +16,7 @@ make_miami_labels(
 \arguments{
 \item{data}{A data.frame object. Required.}
 
-\item{hits.label.col}{Either the name of the column(s), max. 2, to use for
+\item{hits.label.col}{Either the name of the column(s), max = 2, to use for
 automatically labeling n hits, determined using \code{top.n.hits}, or the
 column where the values you provide in \code{hits.label} can be found. Required.}
 
@@ -28,15 +28,15 @@ to label. Defaults to NULL.}
 because the plot can get cluttered easily.}
 
 \item{loggedp}{The name of the column containing your logged p-value information.
-Defaults to "loggedp," assuming data preparation with `prep_miami_data`}
+Defaults to "loggedp," assuming data preparation with \code{prep_miami_data}}
 
 \item{rel.pos}{The name of the column containing the positon of each
 SNP/probe relative to all other SNPs/probes in the genome. Defaults to
-"rel.pos," assuming data preparation with `prep_miami_data`}
+"rel.pos," assuming data preparation with \code{prep_miami_data}.}
 }
 \value{
 A data.frame with three columns: relative position, logged p-value,
-  and the label to add to the miami plot.
+  and the label to add to the miami plot. Designed to be used with ggrepel.
 }
 \description{
 Make label data.frame for miami plot
