@@ -13,9 +13,9 @@
 #'   Defaults to "pos"
 #' @param p The name of the column containing your p-value information.
 #'   Defaults to "p"
-#'
-#' @return Will return an error message if there are problems.
-#'
+#' @export
+#' @return If no problems, executes silently. Will return an error message if
+#'   there are problems.
 #' @author Julie White
 #' @references \url{https://github.com/juliedwhite/miamiplot}
 #'

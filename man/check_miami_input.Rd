@@ -27,7 +27,8 @@ Defaults to "pos"}
 Defaults to "p"}
 }
 \value{
-Will return an error message if there are problems.
+If no problems, executes silently. Will return an error message if
+  there are problems.
 }
 \description{
 Check input to miami plot
