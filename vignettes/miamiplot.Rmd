@@ -24,21 +24,83 @@ This document acts as a tutorial for using the miamiplot package to create Miami
 plots for GWAS or EWAS results. Use `?FunctionName` in the R console to get the 
 complete documentation of a given function.
 
-Get data
+# Data
+For this tutorial, we will use two GWAS of the UK Biobank data, available from 
+the Neale lab: http://www.nealelab.is/uk-biobank
+
+Amount of alcohol drunk on a typical drinking day
 ```{r}
-sourceurl <- "https://www.dropbox.com/s/zmivpo0b9s0acka/102250.gwas.imputed_v3.both_sexes.tsv.bgz?dl=0"
+sourceurl <- "https://www.dropbox.com/s/58ssjbuxem71eik/20403.gwas.imputed_v3.both_sexes.tsv.bgz?dl=1"
 tmp <- tempfile()
 
 download.file(sourceurl,tmp)
-##
-sweet_gwas <- read.csv(
-  gzfile(tmp),
-  sep="\t",
-  header=TRUE,
-  stringsAsFactors=FALSE)
+
+alcoholdrinks <- data.table::fread(cmd = paste("gunzip -c", tmp), sep = "\t",
+                                   header = TRUE, stringsAsFactors = FALSE,
+                                   colClasses = c("character", "character", 
+                                                  "numeric", "character",
+                                                  rep("numeric", 7)),
+                                   na.strings = "NaN")
+
+rm(sourceurl, tmp)
 ```
 
+Number of cigarettes currently smoked daily (current cigarette smokers)
 ```{r}
-sweet_gwas <- fread("https://www.dropbox.com/s/zmivpo0b9s0acka/102250.gwas.imputed_v3.both_sexes.tsv.bgz?dl=0")
+sourceurl <- "https://www.dropbox.com/s/2sr93zgr9j9kwga/3456.gwas.imputed_v3.both_sexes.tsv.bgz?dl=1"
+tmp <- tempfile()
+
+download.file(sourceurl,tmp)
+
+cigarettes <- data.table::fread(cmd = paste("gunzip -c", tmp), sep = "\t", 
+                                header = TRUE, stringsAsFactors = FALSE, 
+                                colClasses = c("character", "character", 
+                                               "numeric", "numeric", 
+                                               "character", rep("numeric", 7)), 
+                                na.strings = "NaN")
+
+rm(sourceurl, tmp)
 ```
+
+The "variant" column in these data contains both the chromosome and position 
+information, but we need to pull it out and add it to separate columns
+```{r}
+# Alcohol
+variant_split <- strsplit(alcoholdrinks$variant, split = ":")
+alcoholdrinks$chr <- unlist(lapply(variant_split, function(l) l[[1]]))
+alcoholdrinks$chr <- as.numeric(gsub(pattern = "X", replacement = "23", 
+                                  x = alcoholdrinks$chr))
+alcoholdrinks$pos <- as.numeric(unlist(lapply(variant_split, function(l) l[[2]])))
+
+# Cigarettes
+variant_split <- strsplit(cigarettes$variant, split = ":")
+cigarettes$chr <- unlist(lapply(variant_split, function(l) l[[1]]))
+cigarettes$chr <- as.numeric(gsub(pattern = "X", replacement = "23", 
+                                   x = cigarettes$chr))
+cigarettes$pos <- as.numeric(unlist(lapply(variant_split, function(l) l[[2]])))
+
+rm(variant_split)
+```
+
+# A simple plot
+Note: for the rest of the tutorial, I will be limiting the plots to the SNPs 
+with p-values lower than 0.05, to speed up plotting time. 
+
+Say you wanted to plot the GWAS of cigarettes per day and wanted to separate
+the plot by beta values, with the variants with positive beta values on top.
+```{r}
+ggmiami(data = cigarettes[which(cigarettes$pval < 0.05),], 
+        split_by = "beta", split_at = 0, p = "pval")
+```
+
+These GWAS also have information on whether the variant is a low confidence 
+variant. Let's plot those on the bottom and high confidence variants on top. 
+```{r}
+ggmiami(data = cigarettes[which(cigarettes$pval < 0.01),], 
+        split_by = "low_confidence_variant", 
+        split_at = "FALSE", p = "pval", top_ylab = "High Confidence Variants",
+        bottom_ylab = "Low Confidence Variants")
+```
+
+
 
