@@ -18,6 +18,10 @@
 #'   chromosomes or a vector of colors to use for coloring chromosomes, with
 #'   length equal to the number of chromosomes being plotted. Defaults to
 #'   alternating black and grey.
+#' @param top_ylab What would you like the y-axis title for the top plot to be?
+#'   Defaults to "-log10(p)"
+#' @param bottom_ylab What would you like the y-axis title for the bottom plot
+#'   to be? Defaults to "-log10(p)"
 #' @param genome_line Should we draw a genome-wide significance line? Set to
 #'   NULL if you do not want this line. Defaults to 5e-8, or supply your own
 #'   number.
@@ -70,6 +74,7 @@
 #'
 #' @importFrom rlang .data
 #' @importFrom ggplot2 aes
+#'
 
 ggmiami <- function(
   data,
@@ -79,6 +84,8 @@ ggmiami <- function(
   pos = "pos",
   p  =  "p",
   chr_colors = c("black", "grey"),
+  top_ylab = "-log10(p)",
+  bottom_ylab = "-log10(p)",
   genome_line = 5e-8,
   suggestive_line = 1e-5,
   hits_label_col = NULL,
@@ -99,6 +106,26 @@ ggmiami <- function(
          number of chromosomes to be displayed.")
   }
 
+  # Prepare the axis titles
+  if (top_ylab == "-log10(p)") {
+    top_ylab <- expression("-log" [10]* "(p)")
+  } else {
+    top_ylab <- bquote(atop (.(top_ylab), "-log" [10]* "(p)"))
+    #top_ylab <- bquote(atop(NA, atop(.(top_ylab), "-log" [10]* "(p)")))
+
+  }
+
+  # Prepare the axis titles
+  if (bottom_ylab == "-log10(p)") {
+    bottom_ylab <- expression("-log" [10]* "(p)")
+  } else {
+    bottom_ylab <- bquote(atop(.(bottom_ylab), "-log" [10]* "(p)"))
+  }
+
+  # When ggtext is published on CRAN, this is a better solution for axis text.
+  # bottom_ylab <- paste0(bottom_ylab, "<br>-log<sub>10</sub>(p)")
+  # Then in ggplot2 call: axis.title.y = ggtext::element_markdown(),
+
   # Create base top plot.
   top_plot <- ggplot2::ggplot(data = plot_data$top,
                               aes(x = .data$rel_pos, y = .data$logged_p)) +
@@ -110,11 +137,11 @@ ggmiami <- function(
     ggplot2::scale_y_continuous(limits = c(0, plot_data$maxp),
                                 expand =
                                   ggplot2::expansion(mult = c(0.02, 0))) +
-    ggplot2::labs(x = "", y = expression("-log" [10]* "(P)")) +
+    ggplot2::labs(x = "", y = top_ylab) +
     ggplot2::theme_classic() +
     ggplot2::theme(legend.position = "none",
                    axis.title.x = ggplot2::element_blank(),
-                   plot.margin = ggplot2::margin(b = 0))
+                   plot.margin = ggplot2::margin(b = 0, l = 10))
 
   # Create base bottom plot
   bottom_plot <- ggplot2::ggplot(data = plot_data$bottom,
@@ -126,12 +153,12 @@ ggmiami <- function(
                                 expand = ggplot2::expansion(mult = 0.01)) +
     ggplot2::scale_y_reverse(limits = c(plot_data$maxp, 0),
                              expand = ggplot2::expansion(mult = c(0, 0.02))) +
-    ggplot2::labs(x = "", y = expression("-log" [10]* "(P)")) +
+    ggplot2::labs(x = "", y = bottom_ylab) +
     ggplot2::theme_classic() +
     ggplot2::theme(legend.position = "none",
                    axis.text.x = ggplot2::element_blank(),
                    axis.title.x = ggplot2::element_blank(),
-                   plot.margin = ggplot2::margin(t = 0))
+                   plot.margin = ggplot2::margin(t = 0, l = 10))
 
   # If the user has requested a suggetive line, add:
   if (!is.null(suggestive_line)) {

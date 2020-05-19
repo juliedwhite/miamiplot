@@ -12,6 +12,8 @@ ggmiami(
   pos = "pos",
   p = "p",
   chr_colors = c("black", "grey"),
+  top_ylab = "-log10(p)",
+  bottom_ylab = "-log10(p)",
   genome_line = 5e-08,
   suggestive_line = 1e-05,
   hits_label_col = NULL,
@@ -44,6 +46,12 @@ Defaults to "p"}
 chromosomes or a vector of colors to use for coloring chromosomes, with
 length equal to the number of chromosomes being plotted. Defaults to
 alternating black and grey.}
+
+\item{top_ylab}{What would you like the y-axis title for the top plot to be?
+Defaults to "-log10(p)"}
+
+\item{bottom_ylab}{What would you like the y-axis title for the bottom plot
+to be? Defaults to "-log10(p)"}
 
 \item{genome_line}{Should we draw a genome-wide significance line? Set to
 NULL if you do not want this line. Defaults to 5e-8, or supply your own
