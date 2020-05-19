@@ -71,14 +71,14 @@ prep_miami_data <- function(
     #Find the center of the chromosome
     dplyr::summarize(chr_center = (max(rel_pos) + min(rel_pos)) / 2)
 
-  # To create a symmetric looking plot, calculate the maximum p-value
-  maxp <- ceiling(max(-log10(data[p])))
-
   # To make it easier for ourselves later, create function-named chromosome and
   # logged p-value columns
   data <- data %>%
     dplyr::mutate(logged_p = -log10(!!rlang::sym(p))) %>%
     dplyr::rename(chr = as.name(chr))
+
+  # To create a symmetric looking plot, calculate the maximum p-value
+  maxp <- ceiling(max(data$logged_p, na.rm = TRUE))
 
   # Depending on what the user has input for split_by and split_at, make top
   # and bottom data.
