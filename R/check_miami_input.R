@@ -2,12 +2,12 @@
 #'
 #' @param data A data.frame object. Required.
 #' @param split_by A character vector. The name of the column to use for
-#'   splitting into top and bottom sections of the Miami plot. Required.
-#' @param split_at A character or numeric vector. If numeric, the top plot will
-#'   contain your results where the values in the \code{split_by} column are
-#'   >= \code{split_at}. If character, top plot will contain your results where
-#'   the values in the \code{split_by} column are equal to \code{split_at}.
-#'   Required.
+#'   splitting into upper and lower sections of the Miami plot. Required.
+#' @param split_at A character or numeric vector. If numeric, the upper plot
+#'   will contain your results where the values in the \code{split_by} column
+#'   are >= \code{split_at}. If character, upper plot will contain your results
+#'   where the values in the \code{split_by} column are equal to
+#'   \code{split_at}. Required.
 #' @param chr The name of the column containing your chromosome information.
 #'   Defaults to "chr"
 #' @param pos The name of the column containing your position information.

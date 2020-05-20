@@ -99,9 +99,10 @@ rm(variant_columns)
 Note: for the rest of the tutorial, I will be limiting the plots to the SNPs 
 with p-values lower than 0.05, to speed up plotting time. 
 
-## Assigning values to to the top and bottom sections of the plot
+## Assigning values to to the upper and lower sections of the plot
 Say you wanted to plot the GWAS of cigarettes per day and wanted to separate
-the plot by beta values, with the variants with positive beta values on top. 
+the plot by beta values, with the variants with positive beta values in the 
+upper plot. 
 Here, we're keeping the default y-axis labels. 
 ```{r}
 ggmiami(data = cigarettes[which(cigarettes$pval < 0.05),], 
@@ -137,13 +138,13 @@ ggmiami(data = cigarettes[which(cigarettes$pval < 0.05),],
 ```
 
 This GWAS also has information on whether the variant is a low confidence 
-variant. Let's plot those on the bottom and high confidence variants on top and
-label the y-axis accordingly. 
+variant. Let's plot those on in the lower plot and high confidence variants in 
+the upper plot and label the y-axis accordingly. 
 ```{r}
 ggmiami(data = cigarettes[which(cigarettes$pval < 0.05),], 
         split_by = "low_confidence_variant", 
-        split_at = "false", p = "pval", top_ylab = "High Confidence Variants",
-        bottom_ylab = "Low Confidence Variants")
+        split_at = "false", p = "pval", upper_ylab = "High Confidence Variants",
+        lower_ylab = "Low Confidence Variants")
 ```
 
 Say you wanted to combine these two GWAS and plot them simultaneously. 
@@ -161,13 +162,13 @@ gwas_combined <- rbind(alcoholdrinks[, ..common_cols],
 head(gwas_combined)
 ```
 
-Plot, with alcohol drinks in the top plot
+Plot, with alcohol drinks in the upper plot
 ```{r}
 # Filtering this one by p < 0.005 since there are now double the values to plot.
 ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),], 
         split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
-        top_ylab = "Amount of alcohol on\n typical drinking day",
-        bottom_ylab = "Daily number of cigarettes")
+        upper_ylab = "Amount of alcohol on\n typical drinking day",
+        lower_ylab = "Daily number of cigarettes")
 ```
 
 ## Changing the significance lines
@@ -177,8 +178,8 @@ plot the genome-wide line at a very small value: 5 x 10^-15
 ```{r}
 ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),], 
         split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
-        top_ylab = "Amount of alcohol on\n typical drinking day",
-        bottom_ylab = "Daily number of cigarettes", suggestive_line = NULL, 
+        upper_ylab = "Amount of alcohol on\n typical drinking day",
+        lower_ylab = "Daily number of cigarettes", suggestive_line = NULL, 
         genome_line = 5e-15)
 ```
 
@@ -188,8 +189,8 @@ supply your own alternating colors, you can do so using color names:
 ```{r}
 ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),], 
         split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
-        top_ylab = "Amount of alcohol on\n typical drinking day",
-        bottom_ylab = "Daily number of cigarettes", 
+        upper_ylab = "Amount of alcohol on\n typical drinking day",
+        lower_ylab = "Daily number of cigarettes", 
         chr_colors = c("blue", "orange"))
 ```
 
@@ -197,8 +198,8 @@ Or using hexidecimal names:
 ```{r}
 ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),], 
         split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
-        top_ylab = "Amount of alcohol on\n typical drinking day",
-        bottom_ylab = "Daily number of cigarettes", 
+        upper_ylab = "Amount of alcohol on\n typical drinking day",
+        lower_ylab = "Daily number of cigarettes", 
         chr_colors = c("#d8b365", "#5ab4ac"))
 ```
 
@@ -207,8 +208,8 @@ go well with the colors chosen. Those can be changed too
 ```{r}
 ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),], 
         split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
-        top_ylab = "Amount of alcohol on\n typical drinking day",
-        bottom_ylab = "Daily number of cigarettes", 
+        upper_ylab = "Amount of alcohol on\n typical drinking day",
+        lower_ylab = "Daily number of cigarettes", 
         chr_colors = c("#d8b365", "#5ab4ac"), suggestive_line_color = "black",
         genome_line_color = "#01665e")
 ```
@@ -221,8 +222,8 @@ mycolors <- colorRampPalette(RColorBrewer::brewer.pal(12, "Paired"))(23)
 
 ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),], 
         split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
-        top_ylab = "Amount of alcohol on\n typical drinking day",
-        bottom_ylab = "Daily number of cigarettes", 
+        upper_ylab = "Amount of alcohol on\n typical drinking day",
+        lower_ylab = "Daily number of cigarettes", 
         chr_colors = mycolors, genome_line = NULL, suggestive_line = NULL)
 ```
 
@@ -232,28 +233,28 @@ mycolors <- ggsci::pal_ucscgb(palette = c("default"))(23)
 
 ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),], 
         split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
-        top_ylab = "Amount of alcohol on\n typical drinking day",
-        bottom_ylab = "Daily number of cigarettes", chr_colors = mycolors,
+        upper_ylab = "Amount of alcohol on\n typical drinking day",
+        lower_ylab = "Daily number of cigarettes", chr_colors = mycolors,
         genome_line = NULL, suggestive_line = NULL)
 ```
 
 ## Adding labels
 To simply label the top 5 hits on each plot, all you need to do is supply the 
 name of the column from which we should draw the lables. Here, we'll label the 
-top 5 with the rsid.
+top 5 from each plot section with the rsid.
 ```{r}
 ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),], 
         split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
-        top_ylab = "Amount of alcohol on\n typical drinking day",
-        bottom_ylab = "Daily number of cigarettes", hits_label_col = "rsid")
+        upper_ylab = "Amount of alcohol on\n typical drinking day",
+        lower_ylab = "Daily number of cigarettes", hits_label_col = "rsid")
 ```
 
 You can also label based on two columns, and change the number of labels: 
 ```{r}
 ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),], 
         split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
-        top_ylab = "Amount of alcohol on\n typical drinking day",
-        bottom_ylab = "Daily number of cigarettes", 
+        upper_ylab = "Amount of alcohol on\n typical drinking day",
+        lower_ylab = "Daily number of cigarettes", 
         hits_label_col = c("rsid", "consequence_category"), top_n_hits = 10)
 ```
 
@@ -263,8 +264,8 @@ specify where these values will be found.
 ```{r}
 ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),], 
         split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
-        top_ylab = "Amount of alcohol on\n typical drinking day",
-        bottom_ylab = "Daily number of cigarettes", 
+        upper_ylab = "Amount of alcohol on\n typical drinking day",
+        lower_ylab = "Daily number of cigarettes", 
         hits_label = c("missense_variant", "stop_lost"),
         hits_label_col = "consequence")
 ```
@@ -285,8 +286,8 @@ gw_per_chromosome <- gwas_combined %>%
 ```{r}
 ggmiami(data = gwas_combined, 
         split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
-        top_ylab = "Amount of alcohol on\n typical drinking day",
-        bottom_ylab = "Daily number of cigarettes", 
+        upper_ylab = "Amount of alcohol on\n typical drinking day",
+        lower_ylab = "Daily number of cigarettes", 
         hits_label = gw_per_chromosome$rsid,
         hits_label_col = "rsid", top_n_hits = NULL)
 ```
@@ -295,8 +296,8 @@ Now for the plot.
 ```{r}
 ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),], 
         split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
-        top_ylab = "Amount of alcohol on\n typical drinking day",
-        bottom_ylab = "Daily number of cigarettes", 
+        upper_ylab = "Amount of alcohol on\n typical drinking day",
+        lower_ylab = "Daily number of cigarettes", 
         hits_label = gw_per_chromosome$rsid,
         hits_label_col = "rsid", top_n_hits = 25)
 ```

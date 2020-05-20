@@ -12,8 +12,8 @@ ggmiami(
   pos = "pos",
   p = "p",
   chr_colors = c("black", "grey"),
-  top_ylab = "-log10(p)",
-  bottom_ylab = "-log10(p)",
+  upper_ylab = "-log10(p)",
+  lower_ylab = "-log10(p)",
   genome_line = 5e-08,
   genome_line_color = "red",
   suggestive_line = 1e-05,
@@ -27,13 +27,13 @@ ggmiami(
 \item{data}{A data.frame object. Required.}
 
 \item{split_by}{A character vector. The name of the column to use for
-splitting into top and bottom sections of the Miami plot. Required.}
+splitting into upper and lower sections of the Miami plot. Required.}
 
-\item{split_at}{A character or numeric vector. If numeric, the top plot will
-contain your results where the values in the \code{split_by} column are
->= \code{split_at}. If character, top plot will contain your results where
-the values in the \code{split_by} column are equal to \code{split_at}.
-Required.}
+\item{split_at}{A character or numeric vector. If numeric, the upper plot
+will contain your results where the values in the \code{split_by} column
+are >= \code{split_at}. If character, the upper plot will contain your
+results where the values in the \code{split_by} column are equal to
+\code{split_at}. Required.}
 
 \item{chr}{The name of the column containing your chromosome information.
 Defaults to "chr"}
@@ -49,11 +49,11 @@ chromosomes or a vector of colors to use for coloring chromosomes, with
 length equal to the number of chromosomes being plotted. Defaults to
 alternating black and grey.}
 
-\item{top_ylab}{What would you like the y-axis title for the top plot to be?
-Defaults to "-log10(p)". Text added here will result in a two-line axis
+\item{upper_ylab}{What would you like the y-axis title for the upper plot to
+be? Defaults to "-log10(p)". Text added here will result in a two-line axis
 with your text on top and "-log10(p)" below.}
 
-\item{bottom_ylab}{Same as \code{top_ylab}, but for the bottom plot.}
+\item{lower_ylab}{Same as \code{upper_ylab}, but for the lower plot.}
 
 \item{genome_line}{Should we draw a genome-wide significance line? Set to
 NULL if you do not want this line. Defaults to 5e-8, or supply your own
@@ -87,11 +87,12 @@ a \code{ggplot2} object
 Create a Miami plot ggplot2 object.
 }
 \examples{
-  If you want to put SNPs with positive beta values on top and netative beta
-  values on the bottom:
+  If you want to put SNPs with positive beta values in the upper plot and
+  netative beta values in the lower plot:
   ggmiami(data = df, split_by = "beta", split_at = 0)
 
-  If you want to put results from study A on top and study B on bottom:
+  If you want to put results from study A in the upper plot and study B
+  in the lower plot:
   ggmiami(data = df, split_by = "study", split_at = "A")
 
   If you want to add a genome wide line at 9e-8, instead of 5e-8:

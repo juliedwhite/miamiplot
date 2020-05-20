@@ -2,12 +2,12 @@
 #'
 #' @param data A data.frame object. Required.
 #' @param split_by A character vector. The name of the column to use for
-#'   splitting into top and bottom sections of the Miami plot. Required.
-#' @param split_at A character or numeric vector. If numeric, the top plot will
-#'   contain your results where the values in the \code{split_by} column are
-#'   >= \code{split_at}. If character, top plot will contain your results where
-#'   the values in the \code{split_by} column are equal to \code{split_at}.
-#'   Required.
+#'   splitting into upper and lower sections of the Miami plot. Required.
+#' @param split_at A character or numeric vector. If numeric, the upper plot
+#'   will contain your results where the values in the \code{split_by} column
+#'   are >= \code{split_at}. If character, the upper plot will contain your
+#'   results where the values in the \code{split_by} column are equal to
+#'   \code{split_at}. Required.
 #' @param chr The name of the column containing your chromosome information.
 #'   Defaults to "chr"
 #' @param pos The name of the column containing your position information.
@@ -18,10 +18,10 @@
 #'   chromosomes or a vector of colors to use for coloring chromosomes, with
 #'   length equal to the number of chromosomes being plotted. Defaults to
 #'   alternating black and grey.
-#' @param top_ylab What would you like the y-axis title for the top plot to be?
-#'   Defaults to "-log10(p)". Text added here will result in a two-line axis
+#' @param upper_ylab What would you like the y-axis title for the upper plot to
+#'   be? Defaults to "-log10(p)". Text added here will result in a two-line axis
 #'   with your text on top and "-log10(p)" below.
-#' @param bottom_ylab Same as \code{top_ylab}, but for the bottom plot.
+#' @param lower_ylab Same as \code{upper_ylab}, but for the lower plot.
 #' @param genome_line Should we draw a genome-wide significance line? Set to
 #'   NULL if you do not want this line. Defaults to 5e-8, or supply your own
 #'   number.
@@ -41,11 +41,12 @@
 #' @param top_n_hits How many of the top hits do you want to label? Defaults to
 #'   5. Set to NULL to turn off this filtering.
 #' @examples
-#'   If you want to put SNPs with positive beta values on top and netative beta
-#'   values on the bottom:
+#'   If you want to put SNPs with positive beta values in the upper plot and
+#'   netative beta values in the lower plot:
 #'   ggmiami(data = df, split_by = "beta", split_at = 0)
 #'
-#'   If you want to put results from study A on top and study B on bottom:
+#'   If you want to put results from study A in the upper plot and study B
+#'   in the lower plot:
 #'   ggmiami(data = df, split_by = "study", split_at = "A")
 #'
 #'   If you want to add a genome wide line at 9e-8, instead of 5e-8:
@@ -88,8 +89,8 @@ ggmiami <- function(
   pos = "pos",
   p  =  "p",
   chr_colors = c("black", "grey"),
-  top_ylab = "-log10(p)",
-  bottom_ylab = "-log10(p)",
+  upper_ylab = "-log10(p)",
+  lower_ylab = "-log10(p)",
   genome_line = 5e-8,
   genome_line_color = "red",
   suggestive_line = 1e-5,
@@ -113,30 +114,30 @@ ggmiami <- function(
   }
 
   # Prepare the axis titles
-  if (top_ylab == "-log10(p)") {
-    top_ylab <- expression("-log" [10]* "(p)")
+  if (upper_ylab == "-log10(p)") {
+    upper_ylab <- expression("-log" [10]* "(p)")
   } else {
-    top_ylab <- bquote(atop(.(top_ylab), "-log" [10]* "(p)"))
-    # top_ylab <- bquote(atop(NA, atop(textstyle(.(top_ylab)),
+    upper_ylab <- bquote(atop(.(upper_ylab), "-log" [10]* "(p)"))
+    # upper_ylab <- bquote(atop(NA, atop(textstyle(.(upper_ylab)),
                                  # textstyle("-log" [10]* "(p)"))))
 
   }
 
   # Prepare the axis titles
-  if (bottom_ylab == "-log10(p)") {
-    bottom_ylab <- expression("-log" [10]* "(p)")
+  if (lower_ylab == "-log10(p)") {
+    lower_ylab <- expression("-log" [10]* "(p)")
   } else {
-    bottom_ylab <- bquote(atop(.(bottom_ylab), "-log" [10]* "(p)"))
-    # bottom_ylab <- bquote(atop(atop(textstyle(.(bottom_ylab)),
+    lower_ylab <- bquote(atop(.(lower_ylab), "-log" [10]* "(p)"))
+    # lower_ylab <- bquote(atop(atop(textstyle(.(lower_ylab)),
                                     # textstyle("-log" [10]* "(p)")), NA))
   }
 
   # When ggtext is published on CRAN, this is a better solution for axis text.
-  # bottom_ylab <- paste0(bottom_ylab, "<br>-log<sub>10</sub>(p)")
+  # lower_ylab <- paste0(lower_ylab, "<br>-log<sub>10</sub>(p)")
   # Then in ggplot2 call: axis.title.y = ggtext::element_markdown(),
 
-  # Create base top plot.
-  top_plot <- ggplot2::ggplot(data = plot_data$top,
+  # Create base upper plot.
+  upper_plot <- ggplot2::ggplot(data = plot_data$upper,
                               aes(x = .data$rel_pos, y = .data$logged_p)) +
     ggplot2::geom_point(aes(color = as.factor(.data$chr)), size = 0.25) +
     ggplot2::scale_color_manual(values = chr_colors) +
@@ -146,14 +147,14 @@ ggmiami <- function(
     ggplot2::scale_y_continuous(limits = c(0, plot_data$maxp),
                                 expand =
                                   ggplot2::expansion(mult = c(0.02, 0))) +
-    ggplot2::labs(x = "", y = top_ylab) +
+    ggplot2::labs(x = "", y = upper_ylab) +
     ggplot2::theme_classic() +
     ggplot2::theme(legend.position = "none",
                    axis.title.x = ggplot2::element_blank(),
                    plot.margin = ggplot2::margin(b = 0, l = 10))
 
-  # Create base bottom plot
-  bottom_plot <- ggplot2::ggplot(data = plot_data$bottom,
+  # Create base lower plot
+  lower_plot <- ggplot2::ggplot(data = plot_data$lower,
                                  aes(x = .data$rel_pos, y = .data$logged_p)) +
     ggplot2::geom_point(aes(color = as.factor(.data$chr)), size = 0.25) +
     ggplot2::scale_color_manual(values = chr_colors) +
@@ -162,7 +163,7 @@ ggmiami <- function(
                                 expand = ggplot2::expansion(mult = 0.01)) +
     ggplot2::scale_y_reverse(limits = c(plot_data$maxp, 0),
                              expand = ggplot2::expansion(mult = c(0, 0.02))) +
-    ggplot2::labs(x = "", y = bottom_ylab) +
+    ggplot2::labs(x = "", y = lower_ylab) +
     ggplot2::theme_classic() +
     ggplot2::theme(legend.position = "none",
                    axis.text.x = ggplot2::element_blank(),
@@ -171,11 +172,11 @@ ggmiami <- function(
 
   # If the user has requested a suggetive line, add:
   if (!is.null(suggestive_line)) {
-    top_plot <- top_plot +
+    upper_plot <- upper_plot +
       ggplot2::geom_hline(yintercept = -log10(suggestive_line),
                           color = suggestive_line_color,
                           linetype = "solid", size = 0.4)
-    bottom_plot <- bottom_plot +
+    lower_plot <- lower_plot +
       ggplot2::geom_hline(yintercept = -log10(suggestive_line),
                           color = suggestive_line_color,
                           linetype = "solid", size = 0.4)
@@ -183,11 +184,11 @@ ggmiami <- function(
 
   # If the user has requested a genome-wide line, add:
   if (!is.null(genome_line)) {
-    top_plot <- top_plot +
+    upper_plot <- upper_plot +
       ggplot2::geom_hline(yintercept = -log10(genome_line),
                           color = genome_line_color,
                           linetype = "dashed", size = 0.4)
-    bottom_plot <- bottom_plot +
+    lower_plot <- lower_plot +
       ggplot2::geom_hline(yintercept = -log10(genome_line),
                           color = genome_line_color,
                           linetype = "dashed", size = 0.4)
@@ -195,35 +196,37 @@ ggmiami <- function(
 
   # If the user requests labels:
   if (!is.null(hits_label_col)) {
-    # Create the labels for the top and bottom plot
-    top_labels <- make_miami_labels(data = plot_data$top,
+    # Create the labels for the upper and lower plot
+    upper_labels <- make_miami_labels(data = plot_data$upper,
                                     hits_label_col = hits_label_col,
                                     hits_label = hits_label,
                                     top_n_hits = top_n_hits)
 
-    bot_labels <- make_miami_labels(data = plot_data$bottom,
+    lower_labels <- make_miami_labels(data = plot_data$lower,
                                     hits_label_col = hits_label_col,
                                     hits_label = hits_label,
                                     top_n_hits = top_n_hits)
 
     # Add to plots
-    top_plot <- top_plot +
-      ggrepel::geom_label_repel(data = top_labels, aes(label = label), size = 2,
-                                segment.size = 0.2, point.padding = 0.2,
+    upper_plot <- upper_plot +
+      ggrepel::geom_label_repel(data = upper_labels, aes(label = label),
+                                size = 2, segment.size = 0.2,
+                                point.padding = 0.2,
                                 ylim = c(plot_data$maxp / 2, NA),
                                 min.segment.length = 0,
                                 force = 2, box.padding = 0.5)
 
-    bottom_plot <- bottom_plot +
-      ggrepel::geom_label_repel(data = bot_labels, aes(label = label), size = 2,
-                                segment.size = 0.2, point.padding = 0.2,
+    lower_plot <- lower_plot +
+      ggrepel::geom_label_repel(data = lower_labels, aes(label = label),
+                                size = 2, segment.size = 0.2,
+                                point.padding = 0.2,
                                 ylim = c(NA, -(plot_data$maxp / 2)),
                                 min.segment.length = 0,
                                 force = 2, box.padding = 0.5)
   }
 
   # Put the two together
-  p <- top_plot + bottom_plot + patchwork::plot_layout(ncol = 1)
+  p <- upper_plot + lower_plot + patchwork::plot_layout(ncol = 1)
 
   return(p)
 

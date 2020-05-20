@@ -10,13 +10,13 @@ prep_miami_data(data, split_by, split_at, chr = "chr", pos = "pos", p = "p")
 \item{data}{A data.frame object. Required.}
 
 \item{split_by}{A character vector. The name of the column to use for
-splitting into top and bottom sections of the Miami plot. Required.}
+splitting into upper and lower sections of the Miami plot. Required.}
 
-\item{split_at}{A character or numeric vector. If numeric, the top plot will
-contain your results where the values in the \code{split_by} column are
->= \code{split_at}. If character, top plot will contain your results where
-the values in the \code{split_by} column are equal to \code{split_at}.
-Required.}
+\item{split_at}{A character or numeric vector. If numeric, the upper plot
+will contain your results where the values in the \code{split_by} column
+are >= \code{split_at}. If character, upper plot will contain your results
+where the values in the \code{split_by} column are equal to
+\code{split_at}. Required.}
 
 \item{chr}{The name of the column containing your chromosome information.
 Defaults to "chr"}
@@ -28,15 +28,15 @@ Defaults to "pos"}
 Defaults to "p"}
 }
 \value{
-A list containing the data needed for the top and bottom plots,
+A list containing the data needed for the upper and lower plots,
   axes, and the maximum p-value (for sizing the plot)
 }
 \description{
 Prepare data for miami plot
 }
 \examples{
-  To create plot data where results are split with positive beta values on
-  top and negative beta values on bottom:
+  To create plot data where results are split with positive beta values in
+  the upper plto and negative beta values in the lower plot:
     plot_data <- prep_miami_data(data = df, split_by = "Beta", split_at = 0)
 }
 \references{

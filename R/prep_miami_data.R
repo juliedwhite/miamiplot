@@ -2,12 +2,12 @@
 #'
 #' @param data A data.frame object. Required.
 #' @param split_by A character vector. The name of the column to use for
-#'   splitting into top and bottom sections of the Miami plot. Required.
-#' @param split_at A character or numeric vector. If numeric, the top plot will
-#'   contain your results where the values in the \code{split_by} column are
-#'   >= \code{split_at}. If character, top plot will contain your results where
-#'   the values in the \code{split_by} column are equal to \code{split_at}.
-#'   Required.
+#'   splitting into upper and lower sections of the Miami plot. Required.
+#' @param split_at A character or numeric vector. If numeric, the upper plot
+#'   will contain your results where the values in the \code{split_by} column
+#'   are >= \code{split_at}. If character, upper plot will contain your results
+#'   where the values in the \code{split_by} column are equal to
+#'   \code{split_at}. Required.
 #' @param chr The name of the column containing your chromosome information.
 #'   Defaults to "chr"
 #' @param pos The name of the column containing your position information.
@@ -15,11 +15,11 @@
 #' @param p The name of the column containing your p-value information.
 #'   Defaults to "p"
 #' @examples
-#'   To create plot data where results are split with positive beta values on
-#'   top and negative beta values on bottom:
+#'   To create plot data where results are split with positive beta values in
+#'   the upper plto and negative beta values in the lower plot:
 #'     plot_data <- prep_miami_data(data = df, split_by = "Beta", split_at = 0)
 #' @export
-#' @return A list containing the data needed for the top and bottom plots,
+#' @return A list containing the data needed for the upper and lower plots,
 #'   axes, and the maximum p-value (for sizing the plot)
 #' @author Julie White
 #' @references \url{https://github.com/juliedwhite/miamiplot}
@@ -80,29 +80,29 @@ prep_miami_data <- function(
   # To create a symmetric looking plot, calculate the maximum p-value
   maxp <- ceiling(max(data$logged_p, na.rm = TRUE))
 
-  # Depending on what the user has input for split_by and split_at, make top
-  # and bottom data.
+  # Depending on what the user has input for split_by and split_at, make upper
+  # and lower plot data.
   if (is.numeric(split_at)) {
-    # Create top data using numeric info.
-    top_data <- data %>%
+    # Create upper plot data using numeric info.
+    upper_data <- data %>%
       dplyr::filter(!!rlang::sym(split_by) >= split_at)
 
-    # Create bottom data using numeric info
-    bot_data <- data %>%
+    # Create lower plot data using numeric info
+    lower_data <- data %>%
       dplyr::filter(!!rlang::sym(split_by) < split_at)
 
   } else if (is.character(split_at)) {
-    # Create top data using character specified by user
-    top_data <- data %>%
+    # Create upper plot data using character specified by user
+    upper_data <- data %>%
       dplyr::filter(!!rlang::sym(split_by) == split_at)
 
-    # Create bottom data using whatever is left in that column
-    bot_data <- data %>%
+    # Create lower plot data using whatever is left in that column
+    lower_data <- data %>%
       dplyr::filter(!!rlang::sym(split_by) != split_at)
 
   }
 
-  miami_data_list <- list("top" = top_data, "bottom" = bot_data,
+  miami_data_list <- list("upper" = upper_data, "lower" = lower_data,
                           "axis" = axis_data, "maxp" = maxp)
   return(miami_data_list)
 }

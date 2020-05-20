@@ -46,15 +46,16 @@ Make label data.frame for miami plot
 \examples{
  If you have already run prep_miami_data and want to label the top 5 hits
  with SNP and gene name:
-   top_labels <- make_miami_labels(data = plot_data$top,
-                                   hits_label_col = c("SNP", "Gene"))
+   upper_top5_labels <- make_miami_labels(data = plot_data$upper,
+                                          hits_label_col = c("SNP", "Gene"))
 
  If you have already run prep_miami_data and want to label the top 10 hits
  from the AHRR, TBX15, and RARA genes:
-   top_labels <- make_miami_labels(data = plot_data$top,
-                                   hits_label_col = "Gene",
-                                   hits_label = c("AHRR", "TBX15", "RARA"),
-                                   top_n_hits = 10)
+   upper_top10_labels <- make_miami_labels(data = plot_data$upper,
+                                           hits_label_col = "Gene",
+                                           hits_label =
+                                                  c("AHRR", "TBX15", "RARA"),
+                                           top_n_hits = 10)
 
  When labeling, the items in hits_label must all come from a single column.
  Specifying multiple columns will return an error.
