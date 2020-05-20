@@ -25,11 +25,15 @@
 #' @param genome_line Should we draw a genome-wide significance line? Set to
 #'   NULL if you do not want this line. Defaults to 5e-8, or supply your own
 #'   number.
+#' @param genome_line_color What color should your genome-wide significance line
+#'   be? Defaults to red.
 #' @param suggestive_line Should we draw a suggestive significance line? Set to
 #'   NULL if you do not want this line. Defaults to 1e-5, or supply your own
 #'   number.
-#' @param hits_labe_lcol Either the name of the column(s), max = 2, to use for
-#'   automatically labeling n hits, determined using \code{top_n_hits}, or the
+#' @param suggestive_line_color What color should your suggestive significance
+#'   line be? Defaults to blue.
+#' @param hits_label_col Either the name of the column(s), max = 2, to use for
+#'   automatically labeling n hits, defined by \code{top_n_hits}, or the
 #'   column where the values you provide in \code{hits_label} can be found.
 #'   Defaults to NULL: labels aren't displayed.
 #' @param hits_label A user-specified character vector of probes/genes/SNPs
@@ -87,7 +91,9 @@ ggmiami <- function(
   top_ylab = "-log10(p)",
   bottom_ylab = "-log10(p)",
   genome_line = 5e-8,
+  genome_line_color = "red",
   suggestive_line = 1e-5,
+  suggestive_line_color = "blue",
   hits_label_col = NULL,
   hits_label = NULL,
   top_n_hits = 5) {
@@ -166,21 +172,25 @@ ggmiami <- function(
   # If the user has requested a suggetive line, add:
   if (!is.null(suggestive_line)) {
     top_plot <- top_plot +
-      ggplot2::geom_hline(yintercept = -log10(suggestive_line), color = "blue",
-                          linetype = "solid", size = 0.3)
+      ggplot2::geom_hline(yintercept = -log10(suggestive_line),
+                          color = suggestive_line_color,
+                          linetype = "solid", size = 0.4)
     bottom_plot <- bottom_plot +
-      ggplot2::geom_hline(yintercept = -log10(suggestive_line), color = "blue",
-                          linetype = "solid", size = 0.3)
+      ggplot2::geom_hline(yintercept = -log10(suggestive_line),
+                          color = suggestive_line_color,
+                          linetype = "solid", size = 0.4)
   }
 
   # If the user has requested a genome-wide line, add:
   if (!is.null(genome_line)) {
     top_plot <- top_plot +
-      ggplot2::geom_hline(yintercept = -log10(genome_line), color = "red",
-                          linetype = "dashed", size = 0.3)
+      ggplot2::geom_hline(yintercept = -log10(genome_line),
+                          color = genome_line_color,
+                          linetype = "dashed", size = 0.4)
     bottom_plot <- bottom_plot +
-      ggplot2::geom_hline(yintercept = -log10(genome_line), color = "red",
-                          linetype = "dashed", size = 0.3)
+      ggplot2::geom_hline(yintercept = -log10(genome_line),
+                          color = genome_line_color,
+                          linetype = "dashed", size = 0.4)
   }
 
   # If the user requests labels:

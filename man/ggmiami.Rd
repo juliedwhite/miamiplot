@@ -15,7 +15,9 @@ ggmiami(
   top_ylab = "-log10(p)",
   bottom_ylab = "-log10(p)",
   genome_line = 5e-08,
+  genome_line_color = "red",
   suggestive_line = 1e-05,
+  suggestive_line_color = "blue",
   hits_label_col = NULL,
   hits_label = NULL,
   top_n_hits = 5
@@ -57,20 +59,26 @@ with your text on top and "-log10(p)" below.}
 NULL if you do not want this line. Defaults to 5e-8, or supply your own
 number.}
 
+\item{genome_line_color}{What color should your genome-wide significance line
+be? Defaults to red.}
+
 \item{suggestive_line}{Should we draw a suggestive significance line? Set to
 NULL if you do not want this line. Defaults to 1e-5, or supply your own
 number.}
+
+\item{suggestive_line_color}{What color should your suggestive significance
+line be? Defaults to blue.}
+
+\item{hits_label_col}{Either the name of the column(s), max = 2, to use for
+automatically labeling n hits, defined by \code{top_n_hits}, or the
+column where the values you provide in \code{hits_label} can be found.
+Defaults to NULL: labels aren't displayed.}
 
 \item{hits_label}{A user-specified character vector of probes/genes/SNPs
 to label. Defaults to NULL.}
 
 \item{top_n_hits}{How many of the top hits do you want to label? Defaults to
 5. Set to NULL to turn off this filtering.}
-
-\item{hits_labe_lcol}{Either the name of the column(s), max = 2, to use for
-automatically labeling n hits, determined using \code{top_n_hits}, or the
-column where the values you provide in \code{hits_label} can be found.
-Defaults to NULL: labels aren't displayed.}
 }
 \value{
 a \code{ggplot2} object
