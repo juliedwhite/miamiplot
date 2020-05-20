@@ -63,7 +63,8 @@ rm(sourceurl, tmp)
 ```
 
 The "variant" column in these data contains both the chromosome and position 
-information, but we need to pull it out and add it to separate columns
+information, but we need to pull it out and add it to separate columns that can
+be found by the plotting function.
 ```{r}
 # Alcohol
 variant_split <- strsplit(alcoholdrinks$variant, split = ":")
@@ -82,25 +83,104 @@ cigarettes$pos <- as.numeric(unlist(lapply(variant_split, function(l) l[[2]])))
 rm(variant_split)
 ```
 
-# A simple plot
+# Plotting
 Note: for the rest of the tutorial, I will be limiting the plots to the SNPs 
 with p-values lower than 0.05, to speed up plotting time. 
 
+## Assigning values to to the top and bottom sections of the plot
 Say you wanted to plot the GWAS of cigarettes per day and wanted to separate
-the plot by beta values, with the variants with positive beta values on top.
+the plot by beta values, with the variants with positive beta values on top. 
+Here, we're keeping the default y-axis labels. 
 ```{r}
 ggmiami(data = cigarettes[which(cigarettes$pval < 0.05),], 
         split_by = "beta", split_at = 0, p = "pval")
 ```
 
-These GWAS also have information on whether the variant is a low confidence 
-variant. Let's plot those on the bottom and high confidence variants on top. 
+This GWAS also has information on whether the variant is a low confidence 
+variant. Let's plot those on the bottom and high confidence variants on top and
+label the y-axis accordingly. 
 ```{r}
-ggmiami(data = cigarettes[which(cigarettes$pval < 0.01),], 
+ggmiami(data = cigarettes[which(cigarettes$pval < 0.05),], 
         split_by = "low_confidence_variant", 
-        split_at = "FALSE", p = "pval", top_ylab = "High Confidence Variants",
+        split_at = "false", p = "pval", top_ylab = "High Confidence Variants",
         bottom_ylab = "Low Confidence Variants")
 ```
 
+Say you wanted to combine these two GWAS and plot them simultaneously. 
+```{r}
+# First label each study so we can tell them apart later. 
+alcoholdrinks$pheno <- "alcoholdrinks"
+cigarettes$pheno <- "cigarettes"
 
+# Combine the two using the common column names. 
+common_cols <- intersect(colnames(alcoholdrinks), colnames(cigarettes))
+gwas_combined <- rbind(alcoholdrinks[, ..common_cols], 
+                       cigarettes[, ..common_cols])
+
+
+head(gwas_combined)
+```
+
+Plot, with alcohol drinks in the top plot
+```{r}
+# Filtering this one by p < 0.005 since there are now double the values to plot.
+ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),], 
+        split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
+        top_ylab = "Amount of alcohol on\n typical drinking day",
+        bottom_ylab = "Daily number of cigarettes")
+```
+
+## Changing the significance lines
+The suggestive and genome-wide significance lines can either be turned off or 
+given different p-values. In this example we'll turn off the suggestive line and
+plot the genome-wide line at a very small value: 5 x 10^-15
+```{r}
+ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),], 
+        split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
+        top_ylab = "Amount of alcohol on\n typical drinking day",
+        bottom_ylab = "Daily number of cigarettes", suggestive_line = NULL, 
+        genome_line = 5e-15)
+```
+
+## Changing colors
+The default chromosome colors are alternating black and grey. If you'd prefer to
+supply your own alternating colors, you can do so using color names: 
+```{r}
+ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),], 
+        split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
+        top_ylab = "Amount of alcohol on\n typical drinking day",
+        bottom_ylab = "Daily number of cigarettes", 
+        chr_colors = c("blue", "orange"))
+```
+
+Or using hexidecimal names: 
+```{r}
+ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),], 
+        split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
+        top_ylab = "Amount of alcohol on\n typical drinking day",
+        bottom_ylab = "Daily number of cigarettes", 
+        chr_colors = c("#d8b365", "#5ab4ac"))
+```
+
+You can also specify a list of colors equal to the number of chromosomes you'd 
+like to plot. 
+Here, using \code{brewer.pal}
+```{r}
+mycolors <- colorRampPalette(RColorBrewer::brewer.pal(12, "Paired"))(23)
+
+ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),], 
+        split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
+        top_ylab = "Amount of alcohol on\n typical drinking day",
+        bottom_ylab = "Daily number of cigarettes", chr_colors = mycolors)
+```
+
+And here using the ucsc genome browser colors, from \code{ggsci}
+```{r}
+mycolors <- ggsci::pal_ucscgb(palette = c("default"))(23)
+
+ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),], 
+        split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
+        top_ylab = "Amount of alcohol on\n typical drinking day",
+        bottom_ylab = "Daily number of cigarettes", chr_colors = mycolors)
+```
 
