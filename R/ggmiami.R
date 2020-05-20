@@ -19,9 +19,9 @@
 #'   length equal to the number of chromosomes being plotted. Defaults to
 #'   alternating black and grey.
 #' @param top_ylab What would you like the y-axis title for the top plot to be?
-#'   Defaults to "-log10(p)"
-#' @param bottom_ylab What would you like the y-axis title for the bottom plot
-#'   to be? Defaults to "-log10(p)"
+#'   Defaults to "-log10(p)". Text added here will result in a two-line axis
+#'   with your text on top and "-log10(p)" below.
+#' @param bottom_ylab Same as \code{top_ylab}, but for the bottom plot.
 #' @param genome_line Should we draw a genome-wide significance line? Set to
 #'   NULL if you do not want this line. Defaults to 5e-8, or supply your own
 #'   number.
@@ -110,8 +110,9 @@ ggmiami <- function(
   if (top_ylab == "-log10(p)") {
     top_ylab <- expression("-log" [10]* "(p)")
   } else {
-    top_ylab <- bquote(atop (.(top_ylab), "-log" [10]* "(p)"))
-    #top_ylab <- bquote(atop(NA, atop(.(top_ylab), "-log" [10]* "(p)")))
+    top_ylab <- bquote(atop(.(top_ylab), "-log" [10]* "(p)"))
+    # top_ylab <- bquote(atop(NA, atop(textstyle(.(top_ylab)),
+                                 # textstyle("-log" [10]* "(p)"))))
 
   }
 
@@ -120,6 +121,8 @@ ggmiami <- function(
     bottom_ylab <- expression("-log" [10]* "(p)")
   } else {
     bottom_ylab <- bquote(atop(.(bottom_ylab), "-log" [10]* "(p)"))
+    # bottom_ylab <- bquote(atop(atop(textstyle(.(bottom_ylab)),
+                                    # textstyle("-log" [10]* "(p)")), NA))
   }
 
   # When ggtext is published on CRAN, this is a better solution for axis text.

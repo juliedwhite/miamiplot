@@ -48,10 +48,10 @@ length equal to the number of chromosomes being plotted. Defaults to
 alternating black and grey.}
 
 \item{top_ylab}{What would you like the y-axis title for the top plot to be?
-Defaults to "-log10(p)"}
+Defaults to "-log10(p)". Text added here will result in a two-line axis
+with your text on top and "-log10(p)" below.}
 
-\item{bottom_ylab}{What would you like the y-axis title for the bottom plot
-to be? Defaults to "-log10(p)"}
+\item{bottom_ylab}{Same as \code{top_ylab}, but for the bottom plot.}
 
 \item{genome_line}{Should we draw a genome-wide significance line? Set to
 NULL if you do not want this line. Defaults to 5e-8, or supply your own
