@@ -159,6 +159,7 @@ gwas_combined <- rbind(alcoholdrinks[, ..common_cols],
                        cigarettes[, ..common_cols])
 
 
+rm(common_cols)
 head(gwas_combined)
 ```
 
@@ -225,6 +226,8 @@ ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),],
         upper_ylab = "Amount of alcohol on\n typical drinking day",
         lower_ylab = "Daily number of cigarettes", 
         chr_colors = mycolors, genome_line = NULL, suggestive_line = NULL)
+
+rm(mycolors)
 ```
 
 And here using the ucsc genome browser colors, from \code{ggsci}
@@ -236,6 +239,8 @@ ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),],
         upper_ylab = "Amount of alcohol on\n typical drinking day",
         lower_ylab = "Daily number of cigarettes", chr_colors = mycolors,
         genome_line = NULL, suggestive_line = NULL)
+
+rm(mycolors)
 ```
 
 ## Adding labels
@@ -259,7 +264,7 @@ ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),],
 ```
 
 If you would instead like to supply a list of which items to label, you can 
-do that using \code{hits_label} to supply the list, and \code{hits_label_col} to
+use \code{hits_label} to supply the list, and \code{hits_label_col} to
 specify where these values will be found.
 ```{r}
 ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),], 
@@ -273,23 +278,44 @@ This example produces a warning about special characters, in this case the "_".
 We can ignore the warning in this case, becase I have provided items with exact
 matches in \code{hits_label}.
 
-Say we wanted to label the hits from each chromosome passing genome-wide 
-significance. To do this, a little-front end work is required to identify these.
+### Custom labels
+Say you wanted to be more specific and provide your own dataframe containing the
+labelling information. This requires a little front-end work on your part, but 
+gives you more control in case the above two options aren't producing what you
+want. 
+
+First, it's helpful to have access to the actual data being plotted, so that you
+don't have to go about calculating relative genomic position on your own. We can
+do this using the \code{prep_miami_data} function from this package.
 ```{r}
-gw_per_chromosome <- gwas_combined %>%
-  filter(pval <= 5e-8) %>%
-  group_by(pheno, chr) %>%
-  arrange(desc(-log10(pval))) %>%
-  slice(1)
+plot_data <- prep_miami_data(data = gwas_combined, split_by = "pheno", 
+                             split_at = "alcoholdrinks", p = "pval")
 ```
 
+Next, say we wanted to identify top 5 peaks from each chromosome
+label them with rsid and consequence_category.
 ```{r}
-ggmiami(data = gwas_combined, 
-        split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
-        upper_ylab = "Amount of alcohol on\n typical drinking day",
-        lower_ylab = "Daily number of cigarettes", 
-        hits_label = gw_per_chromosome$rsid,
-        hits_label_col = "rsid", top_n_hits = NULL)
+# Alcoholic drinks
+alcoholdrinks_labels <- plot_data$upper %>%
+  group_by(chr) %>%
+  arrange(desc(logged_p)) %>%
+  slice(1) %>%
+  ungroup() %>%
+  mutate(label = paste0(rsid, "\n", consequence_category)) %>%
+  select(rel_pos, logged_p, label) %>%
+  arrange(desc(logged_p)) %>%
+  slice(1:5)
+
+# Cigarettes
+cigarettes_labels <- plot_data$lower %>%
+  group_by(chr) %>%
+  arrange(desc(logged_p)) %>%
+  slice(1) %>%
+  ungroup() %>%
+  mutate(label = paste0(rsid, "\n", consequence_category)) %>%
+  select(rel_pos, logged_p, label) %>%
+  arrange(desc(logged_p)) %>%
+  slice(1:5)
 ```
 
 Now for the plot.
@@ -298,8 +324,8 @@ ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),],
         split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
         upper_ylab = "Amount of alcohol on\n typical drinking day",
         lower_ylab = "Daily number of cigarettes", 
-        hits_label = gw_per_chromosome$rsid,
-        hits_label_col = "rsid", top_n_hits = 25)
+        upper_labels_df = alcoholdrinks_labels, 
+        lower_labels_df = cigarettes_labels)
 ```
 
 
