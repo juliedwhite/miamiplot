@@ -18,6 +18,7 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(miamiplot)
+library(dplyr)
 ```
 
 This document acts as a tutorial for using the miamiplot package to create Miami
@@ -62,25 +63,36 @@ cigarettes <- data.table::fread(cmd = paste("gunzip -c", tmp), sep = "\t",
 rm(sourceurl, tmp)
 ```
 
-The "variant" column in these data contains both the chromosome and position 
-information, but we need to pull it out and add it to separate columns that can
-be found by the plotting function.
+The example data I've used doesn't have SNP name or gene annotation included.
+But, the Neale lab does provide an annotation file that we can use.
 ```{r}
+sourceurl <- "https://www.dropbox.com/s/puxks683vb0omeg/variants.tsv.bgz?dl=1"
+tmp <- tempfile()
+
+download.file(sourceurl,tmp)
+
+variantlist <- data.table::fread(cmd = paste("gunzip -c", tmp), sep = "\t", 
+                                header = TRUE, stringsAsFactors = FALSE,
+                                na.strings = "NaN")
+
+rm(sourceurl, tmp)
+```
+
+Add relevant annotation information to the gwas data
+```{r}
+variant_columns <- c("variant", "chr", "pos", "rsid", "consequence",
+                     "consequence_category", "info")
+
 # Alcohol
-variant_split <- strsplit(alcoholdrinks$variant, split = ":")
-alcoholdrinks$chr <- unlist(lapply(variant_split, function(l) l[[1]]))
-alcoholdrinks$chr <- as.numeric(gsub(pattern = "X", replacement = "23", 
-                                  x = alcoholdrinks$chr))
-alcoholdrinks$pos <- as.numeric(unlist(lapply(variant_split, function(l) l[[2]])))
+alcoholdrinks <- merge(alcoholdrinks, variantlist[, ..variant_columns], 
+                       by = "variant")
+
 
 # Cigarettes
-variant_split <- strsplit(cigarettes$variant, split = ":")
-cigarettes$chr <- unlist(lapply(variant_split, function(l) l[[1]]))
-cigarettes$chr <- as.numeric(gsub(pattern = "X", replacement = "23", 
-                                   x = cigarettes$chr))
-cigarettes$pos <- as.numeric(unlist(lapply(variant_split, function(l) l[[2]])))
+cigarettes <- merge(cigarettes, variantlist[, ..variant_columns], 
+                    by = "variant")
 
-rm(variant_split)
+rm(variant_columns)
 ```
 
 # Plotting
@@ -91,6 +103,34 @@ with p-values lower than 0.05, to speed up plotting time.
 Say you wanted to plot the GWAS of cigarettes per day and wanted to separate
 the plot by beta values, with the variants with positive beta values on top. 
 Here, we're keeping the default y-axis labels. 
+```{r}
+ggmiami(data = cigarettes[which(cigarettes$pval < 0.05),], 
+        split_by = "beta", split_at = 0, p = "pval")
+```
+
+Ah, this error indicates that we should check the class of our chromosome column.
+```{r}
+class(cigarettes$chr)
+unique(cigarettes$chr)
+```
+
+And change it to numeric. Because "X" will not switch to numeric well, we will
+also change that to 23
+```{r}
+cigarettes$chr <- as.numeric(gsub(pattern = "X", replacement = "23", 
+                                  x = cigarettes$chr))
+
+alcoholdrinks$chr <- as.numeric(gsub(pattern = "X", replacement = "23",
+                                     x = alcoholdrinks$chr))
+```
+
+Double check..
+```{r}
+class(cigarettes$chr)
+unique(cigarettes$chr)
+```
+
+Plot again...
 ```{r}
 ggmiami(data = cigarettes[which(cigarettes$pval < 0.05),], 
         split_by = "beta", split_at = 0, p = "pval")
@@ -162,6 +202,17 @@ ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),],
         chr_colors = c("#d8b365", "#5ab4ac"))
 ```
 
+You may be thinking that red and blue for the significance lines don't exactly 
+go well with the colors chosen. Those can be changed too
+```{r}
+ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),], 
+        split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
+        top_ylab = "Amount of alcohol on\n typical drinking day",
+        bottom_ylab = "Daily number of cigarettes", 
+        chr_colors = c("#d8b365", "#5ab4ac"), suggestive_line_color = "black",
+        genome_line_color = "#01665e")
+```
+
 You can also specify a list of colors equal to the number of chromosomes you'd 
 like to plot. 
 Here, using \code{brewer.pal}
@@ -171,7 +222,8 @@ mycolors <- colorRampPalette(RColorBrewer::brewer.pal(12, "Paired"))(23)
 ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),], 
         split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
         top_ylab = "Amount of alcohol on\n typical drinking day",
-        bottom_ylab = "Daily number of cigarettes", chr_colors = mycolors)
+        bottom_ylab = "Daily number of cigarettes", 
+        chr_colors = mycolors, genome_line = NULL, suggestive_line = NULL)
 ```
 
 And here using the ucsc genome browser colors, from \code{ggsci}
@@ -181,6 +233,74 @@ mycolors <- ggsci::pal_ucscgb(palette = c("default"))(23)
 ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),], 
         split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
         top_ylab = "Amount of alcohol on\n typical drinking day",
-        bottom_ylab = "Daily number of cigarettes", chr_colors = mycolors)
+        bottom_ylab = "Daily number of cigarettes", chr_colors = mycolors,
+        genome_line = NULL, suggestive_line = NULL)
 ```
+
+## Adding labels
+To simply label the top 5 hits on each plot, all you need to do is supply the 
+name of the column from which we should draw the lables. Here, we'll label the 
+top 5 with the rsid.
+```{r}
+ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),], 
+        split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
+        top_ylab = "Amount of alcohol on\n typical drinking day",
+        bottom_ylab = "Daily number of cigarettes", hits_label_col = "rsid")
+```
+
+You can also label based on two columns, and change the number of labels: 
+```{r}
+ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),], 
+        split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
+        top_ylab = "Amount of alcohol on\n typical drinking day",
+        bottom_ylab = "Daily number of cigarettes", 
+        hits_label_col = c("rsid", "consequence_category"), top_n_hits = 10)
+```
+
+If you would instead like to supply a list of which items to label, you can 
+do that using \code{hits_label} to supply the list, and \code{hits_label_col} to
+specify where these values will be found.
+```{r}
+ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),], 
+        split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
+        top_ylab = "Amount of alcohol on\n typical drinking day",
+        bottom_ylab = "Daily number of cigarettes", 
+        hits_label = c("missense_variant", "stop_lost"),
+        hits_label_col = "consequence")
+```
+This example produces a warning about special characters, in this case the "_".
+We can ignore the warning in this case, becase I have provided items with exact
+matches in \code{hits_label}.
+
+Say we wanted to label the hits from each chromosome passing genome-wide 
+significance. To do this, a little-front end work is required to identify these.
+```{r}
+gw_per_chromosome <- gwas_combined %>%
+  filter(pval <= 5e-8) %>%
+  group_by(pheno, chr) %>%
+  arrange(desc(-log10(pval))) %>%
+  slice(1)
+```
+
+```{r}
+ggmiami(data = gwas_combined, 
+        split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
+        top_ylab = "Amount of alcohol on\n typical drinking day",
+        bottom_ylab = "Daily number of cigarettes", 
+        hits_label = gw_per_chromosome$rsid,
+        hits_label_col = "rsid", top_n_hits = NULL)
+```
+
+Now for the plot.
+```{r}
+ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),], 
+        split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
+        top_ylab = "Amount of alcohol on\n typical drinking day",
+        bottom_ylab = "Daily number of cigarettes", 
+        hits_label = gw_per_chromosome$rsid,
+        hits_label_col = "rsid", top_n_hits = 25)
+```
+
+
+
 
