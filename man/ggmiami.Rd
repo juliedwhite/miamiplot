@@ -20,7 +20,9 @@ ggmiami(
   suggestive_line_color = "blue",
   hits_label_col = NULL,
   hits_label = NULL,
-  top_n_hits = 5
+  top_n_hits = 5,
+  upper_labels_df = NULL,
+  lower_labels_df = NULL
 )
 }
 \arguments{
@@ -79,6 +81,12 @@ to label. Defaults to NULL.}
 
 \item{top_n_hits}{How many of the top hits do you want to label? Defaults to
 5. Set to NULL to turn off this filtering.}
+
+\item{upper_labels_df}{A dataframe containing the relative position, logged
+p-value, and label to use for labelling the upper plot. Column names should
+be c("rel_pos", "logged_p", and "label"). Defaults to NULL.}
+
+\item{lower_labels_df}{Same as \code{upper_labels_df} but for the lower plot.}
 }
 \value{
 a \code{ggplot2} object

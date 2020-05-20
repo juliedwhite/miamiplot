@@ -40,6 +40,10 @@
 #'   to label. Defaults to NULL.
 #' @param top_n_hits How many of the top hits do you want to label? Defaults to
 #'   5. Set to NULL to turn off this filtering.
+#' @param upper_labels_df A dataframe containing the relative position, logged
+#'   p-value, and label to use for labelling the upper plot. Column names should
+#'   be c("rel_pos", "logged_p", and "label"). Defaults to NULL.
+#' @param lower_labels_df Same as \code{upper_labels_df} but for the lower plot.
 #' @examples
 #'   If you want to put SNPs with positive beta values in the upper plot and
 #'   netative beta values in the lower plot:
@@ -97,7 +101,9 @@ ggmiami <- function(
   suggestive_line_color = "blue",
   hits_label_col = NULL,
   hits_label = NULL,
-  top_n_hits = 5) {
+  top_n_hits = 5,
+  upper_labels_df = NULL,
+  lower_labels_df = NULL) {
 
   # Prepare the data
   plot_data <- prep_miami_data(data = data, split_by = split_by,
@@ -194,22 +200,59 @@ ggmiami <- function(
                           linetype = "dashed", size = 0.4)
   }
 
-  # If the user requests labels:
-  if (!is.null(hits_label_col)) {
-    # Create the labels for the upper and lower plot
-    upper_labels <- make_miami_labels(data = plot_data$upper,
-                                    hits_label_col = hits_label_col,
-                                    hits_label = hits_label,
-                                    top_n_hits = top_n_hits)
+  # If the user requests labels based on the hits_label_col or supplying their
+  # own dataframe.
+  if (any(!is.null(hits_label_col), !is.null(upper_labels_df),
+          !is.null(lower_labels_df))) {
+    # If hits_label_col is not null and the *_labels_df are still null, use the
+    # make_miami_labels function to create the label dataframe.
+    if (all(!is.null(hits_label_col), is.null(upper_labels_df),
+           is.null(lower_labels_df))) {
+      # Create the labels for the upper and lower plot
+      upper_labels_df <- make_miami_labels(data = plot_data$upper,
+                                        hits_label_col = hits_label_col,
+                                        hits_label = hits_label,
+                                        top_n_hits = top_n_hits)
 
-    lower_labels <- make_miami_labels(data = plot_data$lower,
-                                    hits_label_col = hits_label_col,
-                                    hits_label = hits_label,
-                                    top_n_hits = top_n_hits)
+      lower_labels_df <- make_miami_labels(data = plot_data$lower,
+                                        hits_label_col = hits_label_col,
+                                        hits_label = hits_label,
+                                        top_n_hits = top_n_hits)
 
-    # Add to plots
+      # If hits_label_col is null and either of the *_labels_df are not null,
+      # just make sure that the colnames are c("rel_pos", "logged_p", "label")
+    } else if (all(is.null(hits_label_col), any(!is.null(upper_labels_df),
+                                                !is.null(lower_labels_df)))) {
+      # If they only specified an upper_label_df:
+      if (all(!is.null(upper_labels_df), is.null(lower_labels_df),
+              !identical(colnames(upper_labels_df),
+                         c("rel_pos", "logged_p", "label")))) {
+        stop("In order to match your labels with the data being plotted,
+             please make sure the colnames for upper_labels_df are c('rel_pos',
+             'logged_p', 'label').")
+
+        # If they only specified a lower_label_df:
+      } else if (all(is.null(upper_labels_df), !is.null(lower_labels_df),
+                     !identical(colnames(lower_labels_df),
+                                c("rel_pos", "logged_p", "label")))) {
+        stop("In order to match your labels with the data being plotted, please
+             make sure the colnames for lower_labels_df are c('rel_pos',
+             'logged_p', 'label').")
+
+        # If they specified both
+      } else if (all(!is.null(upper_labels_df), !is.null(lower_labels_df),
+                     any(!identical(colnames(upper_labels_df),
+                                    colnames(lower_labels_df),
+                                    c("rel_pos", "logged_p", "label"))))) {
+        stop("In order to match your labels with the data being blotted, please
+             make sure the colnames for upper_labels_df and lower_labels_df are
+             c('rel_pos', 'logged_p', 'label').")
+      }
+    }
+
+    # Add labels to plots
     upper_plot <- upper_plot +
-      ggrepel::geom_label_repel(data = upper_labels, aes(label = label),
+      ggrepel::geom_label_repel(data = upper_labels_df, aes(label = label),
                                 size = 2, segment.size = 0.2,
                                 point.padding = 0.2,
                                 ylim = c(plot_data$maxp / 2, NA),
@@ -217,7 +260,7 @@ ggmiami <- function(
                                 force = 2, box.padding = 0.5)
 
     lower_plot <- lower_plot +
-      ggrepel::geom_label_repel(data = lower_labels, aes(label = label),
+      ggrepel::geom_label_repel(data = lower_labels_df, aes(label = label),
                                 size = 2, segment.size = 0.2,
                                 point.padding = 0.2,
                                 ylim = c(NA, -(plot_data$maxp / 2)),
