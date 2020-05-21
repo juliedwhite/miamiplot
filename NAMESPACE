@@ -2,6 +2,7 @@
 
 export(check_miami_input)
 export(ggmiami)
+export(highlight_miami)
 export(make_miami_labels)
 export(prep_miami_data)
 importFrom(ggplot2,aes)
