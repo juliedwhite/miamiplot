@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(miamiplot)
+#library(miamiplot)
 library(dplyr)
 ```
 
@@ -30,7 +30,7 @@ For this tutorial, we will use two GWAS of the UK Biobank data, available from
 the Neale lab: http://www.nealelab.is/uk-biobank
 
 Amount of alcohol drunk on a typical drinking day
-```{r}
+```{r, results="hide"}
 sourceurl <- "https://www.dropbox.com/s/58ssjbuxem71eik/20403.gwas.imputed_v3.both_sexes.tsv.bgz?dl=1"
 tmp <- tempfile()
 
@@ -47,7 +47,7 @@ rm(sourceurl, tmp)
 ```
 
 Number of cigarettes currently smoked daily (current cigarette smokers)
-```{r}
+```{r, results="hide"}
 sourceurl <- "https://www.dropbox.com/s/2sr93zgr9j9kwga/3456.gwas.imputed_v3.both_sexes.tsv.bgz?dl=1"
 tmp <- tempfile()
 
@@ -65,7 +65,7 @@ rm(sourceurl, tmp)
 
 The example data I've used doesn't have SNP name or gene annotation included.
 But, the Neale lab does provide an annotation file that we can use.
-```{r}
+```{r, results="hide"}
 sourceurl <- "https://www.dropbox.com/s/puxks683vb0omeg/variants.tsv.bgz?dl=1"
 tmp <- tempfile()
 
@@ -163,9 +163,9 @@ rm(common_cols)
 head(gwas_combined)
 ```
 
-Plot, with alcohol drinks in the upper plot
+Plot, with alcohol drinks in the upper plot. For the rest of the examples, I'll
+be filtering by p-value < 0.005, since there are now double the values to plot.
 ```{r}
-# Filtering this one by p < 0.005 since there are now double the values to plot.
 ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),], 
         split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
         upper_ylab = "Amount of alcohol on\n typical drinking day",
@@ -292,8 +292,9 @@ plot_data <- prep_miami_data(data = gwas_combined, split_by = "pheno",
                              split_at = "alcoholdrinks", p = "pval")
 ```
 
-Next, say we wanted to identify top 5 peaks from each chromosome
-label them with rsid and consequence_category.
+Next, say we wanted to identify top peak from each chromosome and plot the five
+with the lowest p-values, while labelling them with rsid and 
+consequence_category.
 ```{r}
 # Alcoholic drinks
 alcoholdrinks_labels <- plot_data$upper %>%
@@ -324,10 +325,93 @@ ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),],
         split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
         upper_ylab = "Amount of alcohol on\n typical drinking day",
         lower_ylab = "Daily number of cigarettes", 
-        upper_labels_df = alcoholdrinks_labels, 
+        upper_labels_df = alcoholdrinks_labels,
         lower_labels_df = cigarettes_labels)
 ```
 
+You can also specify labels for only one plot. 
+```{r}
+ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),], 
+        split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
+        upper_ylab = "Amount of alcohol on\n typical drinking day",
+        lower_ylab = "Daily number of cigarettes", 
+        upper_labels_df = alcoholdrinks_labels)
+```
+
+But you cannot mix label methods
+```{r}
+ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),], 
+        split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
+        upper_ylab = "Amount of alcohol on\n typical drinking day",
+        lower_ylab = "Daily number of cigarettes", 
+        upper_labels_df = alcoholdrinks_labels, 
+        hits_label_col = c("rsid", "consequence_category"))
+```
+
+## Highlighting SNPs
+If you wanted to highlight specific points, you can do so. 
+
+For the upper highlighted SNPs, I'm going to highlight everything with a p-value
+above 5e-8.
+```{r}
+alcohol_gw_significant <- alcoholdrinks %>%
+  mutate(logged_p = -log10(pval)) %>%
+  filter(logged_p >= -log10(5e-8)) %>%
+  select(rsid)
+```
+
+
+
+```{r}
+# Position of rs1229984
+top_snp_position <- alcoholdrinks %>%
+  filter(rsid == "rs1229984") %>%
+  select(pos)
+
+# List of SNPs within 100 bp of this position
+alcohol_top_peak <- alcoholdrinks %>%
+  filter(between(pos, top_snp_position$pos - 100, top_snp_position$pos + 100)) %>%
+  select(rsid)
+```
+
+```{r}
+upper_highlight = alcohol_top_peak$rsid
+upper_highlight_col = "rsid"
+upper_highlight_color = "green"
+
+test <- highlight_miami(data = plot_data$upper,
+                        highlight = upper_highlight,
+                        highlight_col = upper_highlight_col,
+                        highlight_color = upper_highlight_color)
+```
+
+
+Add to plot
+```{r}
+ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.0005),], 
+        split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
+        upper_ylab = "Amount of alcohol on\n typical drinking day",
+        lower_ylab = "Daily number of cigarettes", 
+        upper_labels_df = alcoholdrinks_labels,
+        lower_labels_df = cigarettes_labels, 
+        upper_highlight = alcohol_gw_significant$rsid, 
+        upper_highlight_col = "rsid")
+```
+
+
+## Saving the plot 
+Since the plot produced is a patchwork of ggplot2 objects, it can be saved using ggsave.
+```{r}
+p <- ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),],
+             split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
+             upper_ylab = "Amount of alcohol on\n typical drinking day",
+             lower_ylab = "Daily number of cigarettes", 
+             upper_labels_df = alcoholdrinks_labels, 
+             lower_labels_df = cigarettes_labels)
+
+ggplot2::ggsave(filename = "Daily_Alcohol_Cigarettes_MiamiPlot.png", 
+                device = "png", width = 8, height = 6, units = "in")
+```
 
 
 
