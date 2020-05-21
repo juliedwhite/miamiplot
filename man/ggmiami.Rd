@@ -22,7 +22,13 @@ ggmiami(
   hits_label = NULL,
   top_n_hits = 5,
   upper_labels_df = NULL,
-  lower_labels_df = NULL
+  lower_labels_df = NULL,
+  upper_highlight = NULL,
+  upper_highlight_col = NULL,
+  upper_highlight_color = "green",
+  lower_highlight = NULL,
+  lower_highlight_col = NULL,
+  lower_highlight_color = "green"
 )
 }
 \arguments{
@@ -77,16 +83,36 @@ column where the values you provide in \code{hits_label} can be found.
 Defaults to NULL: labels aren't displayed.}
 
 \item{hits_label}{A user-specified character vector of probes/genes/SNPs
-to label. Defaults to NULL.}
+to label. Defaults to NULL. If you specify this, you must also specify
+hits_labels_col so that we know where to look for the items.}
 
 \item{top_n_hits}{How many of the top hits do you want to label? Defaults to
 5. Set to NULL to turn off this filtering.}
 
 \item{upper_labels_df}{A dataframe containing the relative position, logged
 p-value, and label to use for labelling the upper plot. Column names should
-be c("rel_pos", "logged_p", and "label"). Defaults to NULL.}
+be c("rel_pos", "logged_p", "label"). Defaults to NULL.}
 
 \item{lower_labels_df}{Same as \code{upper_labels_df} but for the lower plot.}
+
+\item{upper_highlight}{A vector of SNPs or gene names you would like to
+highlight in the upper plot. Defaults to NULL. If you specify this, you
+must also specify upper_highlight_col so that we know where to find the
+items.}
+
+\item{upper_highlight_col}{The column where the values you provide in
+\code{upper_highlight} can be found. Defaults to NULL.}
+
+\item{upper_highlight_color}{The color that you would like the highlighted
+points in the upper plot to be. Defaults to "green."}
+
+\item{lower_highlight}{Same as \code{upper_highlight} but for the lower plot.}
+
+\item{lower_highlight_col}{Same as \code{upper_highlight_col} but for the
+lower plot.}
+
+\item{lower_highlight_color}{Same as \code{lower_highlight_color} but for the
+lower plot.}
 }
 \value{
 a \code{ggplot2} object
