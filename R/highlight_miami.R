@@ -61,10 +61,14 @@ highlight_miami <- function(data, highlight, highlight_col,
             characters from this column or providing exact matches.")
   }
 
+  # Make the highlighting information a data.frame
+  highlight_info <- data.frame(as.character(highlight), highlight_color,
+                               stringsAsFactors = FALSE)
+  colnames(highlight_info) <- c(highlight_col, "color")
+
   # Filter the data to get the position of these labels
   highlight_df <- data %>%
-    dplyr::filter(!!rlang::sym(highlight_col) %in% highlight) %>%
-    dplyr::mutate(color = highlight_color) %>%
+    dplyr::inner_join(x = ., y = highlight_info, by = paste(highlight_col)) %>%
     dplyr::rename(rel_pos = !!rlang::sym(rel_pos)) %>%
     dplyr::rename(logged_p = !!rlang::sym(logged_p)) %>%
     dplyr::select(rel_pos, logged_p, color)
