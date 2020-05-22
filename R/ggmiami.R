@@ -160,12 +160,14 @@ ggmiami <- function(
 
   # When ggtext is published on CRAN, this is a better solution for axis text.
   # lower_ylab <- paste0(lower_ylab, "<br>-log<sub>10</sub>(p)")
-  # Then in ggplot2 call: axis.title.y = ggtext::element_markdown(),
+  # Then in ggplot2 call: axis.title.y = ggtext::element_markdown() and un-set
+  # the l margin.
 
   # Create base upper plot.
-  upper_plot <- ggplot2::ggplot(data = plot_data$upper,
-                              aes(x = .data$rel_pos, y = .data$logged_p)) +
-    ggplot2::geom_point(aes(color = as.factor(.data$chr)), size = 0.25) +
+  upper_plot <- ggplot2::ggplot() +
+    ggplot2::geom_point(data = plot_data$upper,
+                        aes(x = .data$rel_pos, y = .data$logged_p,
+                            color = as.factor(.data$chr)), size = 0.25) +
     ggplot2::scale_color_manual(values = chr_colors) +
     ggplot2::scale_x_continuous(labels = plot_data$axis$chr,
                                 breaks = plot_data$axis$chr_center,
@@ -180,9 +182,10 @@ ggmiami <- function(
                    plot.margin = ggplot2::margin(b = 0, l = 10))
 
   # Create base lower plot
-  lower_plot <- ggplot2::ggplot(data = plot_data$lower,
-                                 aes(x = .data$rel_pos, y = .data$logged_p)) +
-    ggplot2::geom_point(aes(color = as.factor(.data$chr)), size = 0.25) +
+  lower_plot <- ggplot2::ggplot() +
+    ggplot2::geom_point(data = plot_data$lower,
+                        aes(x = .data$rel_pos, y = .data$logged_p,
+                            color = as.factor(.data$chr)), size = 0.25) +
     ggplot2::scale_color_manual(values = chr_colors) +
     ggplot2::scale_x_continuous(breaks = plot_data$axis$chr_center,
                                 position = "top",
@@ -220,6 +223,16 @@ ggmiami <- function(
                           linetype = "dashed", size = 0.4)
   }
 
+  # If they try to specify both hits_label_col and dataframe(s), return an
+  # error message.
+  if (all(!is.null(hits_label_col), any(!is.null(upper_labels_df),
+                                        !is.null(lower_labels_df)))) {
+    stop("You have specified both hits_label_col and a *_labels_df. This
+         package does not know how to use both information simultaneously.
+         Please only use one method for labelling: either hits_label_col (with
+         or without hits_label), or *_labels_df.")
+  }
+
   # If the user requests labels based on the hits_label_col
   if (all(!is.null(hits_label_col), is.null(upper_labels_df),
           is.null(lower_labels_df))) {
@@ -236,7 +249,10 @@ ggmiami <- function(
 
     # Add to the plots
     upper_plot <- upper_plot +
-      ggrepel::geom_label_repel(data = upper_labels_df, aes(label = label),
+      ggrepel::geom_label_repel(data = upper_labels_df,
+                                aes(x = .data$rel_pos,
+                                    y = .data$logged_p,
+                                    label = .data$label),
                                 size = 2, segment.size = 0.2,
                                 point.padding = 0.3,
                                 ylim = c(plot_data$maxp / 2, NA),
@@ -244,81 +260,54 @@ ggmiami <- function(
                                 box.padding = 0.5)
 
     lower_plot <- lower_plot +
-      ggrepel::geom_label_repel(data = lower_labels_df, aes(label = label),
+      ggrepel::geom_label_repel(data = lower_labels_df,
+                                aes(x = .data$rel_pos,
+                                    y = .data$logged_p,
+                                    label = .data$label),
                                 size = 2, segment.size = 0.2,
                                 point.padding = 0.3,
                                 ylim = c(NA, -(plot_data$maxp / 2)),
                                 min.segment.length = 0, force = 2,
                                 box.padding = 0.5)
+  }
 
-    # If the user requests labels based on a dataframe for the upper plot
-    } else if (all(is.null(hits_label_col), !is.null(upper_labels_df),
-          is.null(lower_labels_df))) {
+  # If the user requests labels based on a dataframe for the upper plot
+  if (all(is.null(hits_label_col), !is.null(upper_labels_df))) {
       # Make sure that the column names in upper_labels_df are correct
       checkmate::assertNames(colnames(upper_labels_df),
                              identical.to = c("rel_pos", "logged_p", "label"))
 
       # Add to plot
       upper_plot <- upper_plot +
-        ggrepel::geom_label_repel(data = upper_labels_df, aes(label = label),
+        ggrepel::geom_label_repel(data = upper_labels_df,
+                                  aes(x = .data$rel_pos,
+                                      y = .data$logged_p,
+                                      label = .data$label),
                                   size = 2, segment.size = 0.2,
                                   point.padding = 0.3,
                                   ylim = c(plot_data$maxp / 2, NA),
                                   min.segment.length = 0, force = 2,
                                   box.padding = 0.5)
+  }
 
-      # If the user requests labels based on a dataframe for the lower plot
-    } else if (all(is.null(hits_label_col), is.null(upper_labels_df),
-                  !is.null(lower_labels_df))) {
+  # If the user requests labels based on a dataframe for the lower plot
+  if (all(is.null(hits_label_col), !is.null(lower_labels_df))) {
       # Make sure that the column names in lower_labels_df are correct
       checkmate::assertNames(colnames(lower_labels_df),
                              identical.to = c("rel_pos", "logged_p", "label"))
 
       # Add to plot
       lower_plot <- lower_plot +
-        ggrepel::geom_label_repel(data = lower_labels_df, aes(label = label),
+        ggrepel::geom_label_repel(data = lower_labels_df,
+                                  aes(x = .data$rel_pos,
+                                      y = .data$logged_p,
+                                      label = .data$label),
                                   size = 2, segment.size = 0.2,
                                   point.padding = 0.3,
                                   ylim = c(NA, -(plot_data$maxp / 2)),
                                   min.segment.length = 0, force = 2,
                                   box.padding = 0.5)
-
-      # If the user requests labels based on dataframes for the upper and lower
-      # plot
-    } else if (all(is.null(hits_label_col), !is.null(upper_labels_df),
-                   !is.null(lower_labels_df))) {
-      # Make sure that the column names are correct
-      checkmate::assertNames(colnames(upper_labels_df),
-                             identical.to = c("rel_pos", "logged_p", "label"))
-      checkmate::assertNames(colnames(lower_labels_df),
-                             identical.to = c("rel_pos", "logged_p", "label"))
-
-      # Add to the plots
-      upper_plot <- upper_plot +
-        ggrepel::geom_label_repel(data = upper_labels_df, aes(label = label),
-                                  size = 2, segment.size = 0.2,
-                                  point.padding = 0.3,
-                                  ylim = c(plot_data$maxp / 2, NA),
-                                  min.segment.length = 0, force = 2,
-                                  box.padding = 0.5)
-
-      lower_plot <- lower_plot +
-        ggrepel::geom_label_repel(data = lower_labels_df, aes(label = label),
-                                  size = 2, segment.size = 0.2,
-                                  point.padding = 0.3,
-                                  ylim = c(NA, -(plot_data$maxp / 2)),
-                                  min.segment.length = 0, force = 2,
-                                  box.padding = 0.5)
-
-      # If they try to specify both hits_label_col and dataframe(s), return an
-      # error message.
-    } else if (all(!is.null(hits_label_col), any(!is.null(upper_labels_df),
-                                                 !is.null(lower_labels_df)))) {
-      stop("You have specified both hits_label_col and a *_labels_df. This
-           does not know how to use both information simultaneously. Please
-           only use one method for labelling: either hits_label_col (with or
-           without hits_label), or *_labels_df.")
-    }
+  }
 
   # Highlight upper snps
   if (all(!is.null(upper_highlight), !is.null(upper_highlight_col))) {
@@ -333,7 +322,7 @@ ggmiami <- function(
     upper_plot <- upper_plot +
       ggplot2::geom_point(data = upper_highlight_df,
                           aes(x = .data$rel_pos, y = .data$logged_p),
-                          color = upper_highlight_color$color,
+                          color = upper_highlight_df$color,
                           size = 0.25)
   }
 
