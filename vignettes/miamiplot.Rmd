@@ -30,50 +30,50 @@ For this tutorial, we will use two GWAS of the UK Biobank data, available from
 the Neale lab: http://www.nealelab.is/uk-biobank
 
 Amount of alcohol drunk on a typical drinking day
-```{r, results="hide"}
+```{r, results="hide", message=FALSE}
 sourceurl <- "https://www.dropbox.com/s/58ssjbuxem71eik/20403.gwas.imputed_v3.both_sexes.tsv.bgz?dl=1"
 tmp <- tempfile()
 
-download.file(sourceurl,tmp)
+download.file(sourceurl,tmp, quiet = TRUE)
 
 alcoholdrinks <- data.table::fread(cmd = paste("gunzip -c", tmp), sep = "\t",
                                    header = TRUE, stringsAsFactors = FALSE,
                                    colClasses = c("character", "character", 
                                                   "numeric", "character",
                                                   rep("numeric", 7)),
-                                   na.strings = "NaN")
+                                   na.strings = "NaN", showProgress = FALSE)
 
 rm(sourceurl, tmp)
 ```
 
 Number of cigarettes currently smoked daily (current cigarette smokers)
-```{r, results="hide"}
+```{r, results="hide", message=FALSE}
 sourceurl <- "https://www.dropbox.com/s/2sr93zgr9j9kwga/3456.gwas.imputed_v3.both_sexes.tsv.bgz?dl=1"
 tmp <- tempfile()
 
-download.file(sourceurl,tmp)
+download.file(sourceurl,tmp, quiet = TRUE)
 
 cigarettes <- data.table::fread(cmd = paste("gunzip -c", tmp), sep = "\t", 
                                 header = TRUE, stringsAsFactors = FALSE, 
                                 colClasses = c("character", "character", 
                                                "numeric", "numeric", 
                                                "character", rep("numeric", 7)), 
-                                na.strings = "NaN")
+                                na.strings = "NaN", showProgress = FALSE)
 
 rm(sourceurl, tmp)
 ```
 
 The example data I've used doesn't have SNP name or gene annotation included.
 But, the Neale lab does provide an annotation file that we can use.
-```{r, results="hide"}
+```{r, results="hide", message=FALSE}
 sourceurl <- "https://www.dropbox.com/s/puxks683vb0omeg/variants.tsv.bgz?dl=1"
 tmp <- tempfile()
 
-download.file(sourceurl,tmp)
+download.file(sourceurl,tmp, quiet = TRUE)
 
 variantlist <- data.table::fread(cmd = paste("gunzip -c", tmp), sep = "\t", 
                                 header = TRUE, stringsAsFactors = FALSE,
-                                na.strings = "NaN")
+                                na.strings = "NaN", showProgress = FALSE)
 
 rm(sourceurl, tmp)
 ```
