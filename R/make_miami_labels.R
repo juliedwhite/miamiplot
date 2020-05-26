@@ -94,10 +94,10 @@ make_miami_labels <- function(data, hits_label_col, hits_label = NULL,
     # Check if the column contains special characters, which makes it difficult
     # to identify and sort the labels.
     if (!rlang::is_empty(grep("[[:punct:]]", data[, hits_label_col]))) {
-      warning("The column {", hits_label_col, "} has special characters in it.",
+      message("The column {", hits_label_col, "} has special characters in it.",
               " This function only respects exact matches, so your labels may ",
               "be incorrect. Please consider removing the special characters ",
-              "from this column or providing exact matches.")
+              "from this column or providing exact matches.", appendLF = TRUE)
     }
 
     # Filter the data to get the position of these labels
@@ -111,7 +111,7 @@ make_miami_labels <- function(data, hits_label_col, hits_label = NULL,
     if (nrow(label_df) == 0) {
       warning("I could not find any matches for {",
               paste(hits_label, collapse = ", "), "} in {", hits_label_col,
-              "}. Perhaps there was a typo?")
+              "}. Perhaps there was a typo?\n")
     }
   }
 

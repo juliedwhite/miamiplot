@@ -55,10 +55,11 @@ highlight_miami <- function(data, highlight, highlight_col,
   # Check if the column contains special characters, which makes it difficult
   # to identify and sort the labels.
   if (!rlang::is_empty(grep("[[:punct:]]", data[, highlight_col]))) {
-    warning("The column {", highlight_col, "} has special characters in it.
+    message("The column {", highlight_col, "} has special characters in it.
             This function only respects exact matches, so your highlights
             may be incorrect. Please consider removing the special
-            characters from this column or providing exact matches.")
+            characters from this column or providing exact matches.",
+            appendLF = TRUE)
   }
 
   # Make the highlighting information a data.frame
@@ -78,7 +79,7 @@ highlight_miami <- function(data, highlight, highlight_col,
   if (nrow(highlight_df) == 0) {
     warning("I could not find any matches for {",
             head(paste(highlight, collapse = ", ")), "} in {", highlight_col,
-            "}. Perhaps there was a typo?")
+            "}. Perhaps there was a typo?\n")
   }
 
   return(highlight_df)
