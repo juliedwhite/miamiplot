@@ -1,5 +1,5 @@
 ---
-title: "miamiplot"
+title: "Plotting with miamiplot"
 author: "Julie White"
 date: "` r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-#library(miamiplot)
+library(miamiplot)
 library(dplyr)
 ```
 
@@ -104,7 +104,7 @@ Say you wanted to plot the GWAS of cigarettes per day and wanted to separate
 the plot by beta values, with the variants with positive beta values in the 
 upper plot. 
 Here, we're keeping the default y-axis labels. 
-```{r}
+```{r, error = TRUE, purl = FALSE}
 ggmiami(data = cigarettes[which(cigarettes$pval < 0.05),], 
         split_by = "beta", split_at = 0, p = "pval")
 ```
@@ -342,7 +342,7 @@ ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),],
 ```
 
 But you cannot mix label methods
-```{r}
+```{r, error = TRUE, purl = FALSE}
 ggmiami(data = gwas_combined[which(gwas_combined$pval < 0.005),], 
         split_by = "pheno", split_at = "alcoholdrinks", p = "pval", 
         upper_ylab = "Amount of alcohol on\n typical drinking day",
