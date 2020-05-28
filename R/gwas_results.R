@@ -6,14 +6,15 @@
 #'
 #' @format A data.frame with 60,000 rows and 8 variables:
 #' \describe{
-#'   \item(rsid){Variant name}
-#'   \item(chr){Chromosome}
-#'   \item(pos){Base pair position}
-#'   \item(beta){Beta value from simulated GWAS}
-#'   \item(se){Standard error from simulated GWAS}
-#'   \item(tstat){T-statistic from simulated GWAS}
-#'   \item(pval){P-value from simulated GWAS}
-#'   \item(study){Either study A or study B, to signify two GWAS of the same
-#'                phenotypes that have been combined for plotting purposes.}}
+#'   \item{rsid}{Variant name}
+#'   \item{chr}{Chromosome}
+#'   \item{pos}{Base pair position}
+#'   \item{beta}{Beta value from simulated GWAS}
+#'   \item{se}{Standard error from simulated GWAS}
+#'   \item{tstat}{T-statistic from simulated GWAS}
+#'   \item{pval}{P-value from simulated GWAS}
+#'   \item{study}{Either study A or study B, to signify two GWAS of the same
+#'                phenotypes that have been combined for plotting purposes.}
+#' }
 #'
 "gwas_results"
