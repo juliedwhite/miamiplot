@@ -344,7 +344,7 @@ ggmiami <- function(
   }
 
   # Put the two together
-  p <- upper_plot + lower_plot + patchwork::plot_layout(ncol = 1)
+  p <- upper_plot + patchwork::plot_layout(ncol = 1)
 
   return(p)
 
