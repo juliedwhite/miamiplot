@@ -78,8 +78,8 @@ highlight_miami <- function(data, highlight, highlight_col,
   # warning.
   if (nrow(highlight_df) == 0) {
     warning("I could not find any matches for {",
-            head(paste(highlight, collapse = ", ")), "} in {", highlight_col,
-            "}. Perhaps there was a typo?\n")
+            utils::head(paste(highlight, collapse = ", ")), "} in {",
+            highlight_col, "}. Perhaps there was a typo?\n")
   }
 
   return(highlight_df)
