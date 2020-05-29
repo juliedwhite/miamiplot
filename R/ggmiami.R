@@ -344,8 +344,6 @@ ggmiami <- function(
   }
 
   # Put the two together
-  p <- gridExtra::grid.arrange(upper_plot, lower_plot, nrow = 2)
-
-  return(p)
+  gridExtra::grid.arrange(upper_plot, lower_plot, nrow = 2)
 
 }
