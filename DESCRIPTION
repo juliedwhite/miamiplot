@@ -16,10 +16,10 @@ Imports:
     rlang,
     dplyr,
     ggplot2,
-    patchwork,
     checkmate,
     ggrepel,
-    magrittr
+    magrittr,
+    gridExtra
 RoxygenNote: 7.1.0
 Suggests: 
     knitr,
