@@ -17,21 +17,21 @@
 #'   SNP/probe relative to all other SNPs/probes in the genome. Defaults to
 #'   "rel_pos," assuming data preparation with \code{prep_miami_data}.
 #' @examples
-#'  If you have already run prep_miami_data and want to label the top 5 hits
-#'  with SNP and gene name:
+#'  # If you have already run prep_miami_data and want to label the top 5 hits
+#'  # with SNP and gene name:
 #'    upper_top5_labels <- make_miami_labels(data = plot_data$upper,
 #'                                           hits_label_col = c("SNP", "Gene"))
 #'
-#'  If you have already run prep_miami_data and want to label the top 10 hits
-#'  from the AHRR, TBX15, and RARA genes:
+#'  # If you have already run prep_miami_data and want to label the top 10 hits
+#'  # from the AHRR, TBX15, and RARA genes:
 #'    upper_top10_labels <- make_miami_labels(data = plot_data$upper,
 #'                                            hits_label_col = "Gene",
 #'                                            hits_label =
 #'                                                   c("AHRR", "TBX15", "RARA"),
 #'                                            top_n_hits = 10)
 #'
-#'  When labeling, the items in hits_label must all come from a single column.
-#'  Specifying multiple columns will return an error.
+#'  # When labeling, the items in hits_label must all come from a single column.
+#'  # Specifying multiple columns will return an error.
 #'
 #'  \dontrun{
 #'  ggmiami(data = gwas_results, split_by = "study", split_at = "A",
@@ -39,7 +39,7 @@
 #'          hits_label = c("1", AHRR", "2", "TBX15", "RARA"), top_n_hits = 10)
 #'  }
 #'
-#'  If you have not run prep_miami_data:
+#'  # If you have not run prep_miami_data:
 #'    labels <- make_miami_labels(datat = df, hits_label_col = c("SNP", "pos"),
 #'                                logged_p = "logp",
 #'                                rel_pos = "relative_SNP_position")

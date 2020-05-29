@@ -36,7 +36,7 @@ Check input to miami plot
 }
 \examples{
 check_miami_input(data = gwas_results, split_by = "beta",
-                            split_at = 0)
+                            split_at = 0, p = "pval")
 }
 \references{
 \url{https://github.com/juliedwhite/miamiplot}

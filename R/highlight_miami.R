@@ -15,12 +15,12 @@
 #'   SNP/probe relative to all other SNPs/probes in the genome. Defaults to
 #'   "rel_pos," assuming data preparation with \code{prep_miami_data}.
 #' @examples
-#'   upper_highlight <- highlight_miami(data = plot_data$upper,
+#'  upper_highlight <- highlight_miami(data = plot_data$upper,
 #'                                      highlight = "snps_of_interest"
 #'                                      highlight_col = "rsid")
 #'
-#'  When highlighting, the items in 'highlight' must all come from a single
-#'  column. Specifying multiple columns in highlight_col will return an error.
+#'  # When highlighting, the items in 'highlight' must all come from a single
+#'  # column. Specifying multiple columns in highlight_col will return an error.
 #'
 #'  \dontrun{
 #'  highlight_miami(data = df, split_by = "study", split_at = "A",

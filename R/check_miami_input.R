@@ -15,7 +15,7 @@
 #' @param p The name of the column containing your p-value information.
 #'   Defaults to "p"
 #' @examples check_miami_input(data = gwas_results, split_by = "beta",
-#'                             split_at = 0)
+#'                             split_at = 0, p = "pval")
 #' @export
 #' @return If no problems, executes silently. Will return an error message if
 #'   there are problems.

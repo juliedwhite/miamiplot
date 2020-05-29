@@ -121,15 +121,16 @@ a \code{ggplot2} object
 Create a Miami plot ggplot2 object.
 }
 \examples{
-  If you want to put SNPs with positive beta values in the upper plot and
-  netative beta values in the lower plot:
-  ggmiami(data = gwas_results, split_by = "beta", split_at = 0)
+  # If you want to put SNPs with positive beta values in the upper plot and
+  # negative beta values in the lower plot:
+  ggmiami(data = gwas_results, split_by = "beta", split_at = 0, p = "pval")
 
-  If you want to put results from study A in the upper plot and study B
-  in the lower plot:
-  ggmiami(data = gwas_results, split_by = "study", split_at = "A")
+  # If you want to put results from study A in the upper plot and study B
+  # in the lower plot:
+  ggmiami(data = gwas_results, split_by = "study", split_at = "A",
+          p = "pval")
 
-  More examples in the vignette:
+  # More examples in the vignette:
   vignette("miamiplot")
 
 }

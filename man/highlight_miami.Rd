@@ -42,12 +42,12 @@ A data.frame with three columns: relative position, logged p-value,
 Make highlight data.frame for miami plot
 }
 \examples{
-  upper_highlight <- highlight_miami(data = plot_data$upper,
+ upper_highlight <- highlight_miami(data = plot_data$upper,
                                      highlight = "snps_of_interest"
                                      highlight_col = "rsid")
 
- When highlighting, the items in 'highlight' must all come from a single
- column. Specifying multiple columns in highlight_col will return an error.
+ # When highlighting, the items in 'highlight' must all come from a single
+ # column. Specifying multiple columns in highlight_col will return an error.
 
  \dontrun{
  highlight_miami(data = df, split_by = "study", split_at = "A",

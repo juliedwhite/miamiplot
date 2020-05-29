@@ -15,10 +15,10 @@
 #' @param p The name of the column containing your p-value information.
 #'   Defaults to "p"
 #' @examples
-#'   To create plot data where results are split with positive beta values in
-#'   the upper plto and negative beta values in the lower plot:
+#'   # To create plot data where results are split with positive beta values in
+#'   # the upper plto and negative beta values in the lower plot:
 #'     plot_data <- prep_miami_data(data = gwas_results, split_by = "beta",
-#'                                  split_at = 0)
+#'                                  split_at = 0, p = "pval")
 #' @export
 #' @return A list containing the data needed for the upper and lower plots,
 #'   axes, and the maximum p-value (for sizing the plot)
