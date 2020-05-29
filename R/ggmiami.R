@@ -61,33 +61,14 @@
 #' @examples
 #'   If you want to put SNPs with positive beta values in the upper plot and
 #'   netative beta values in the lower plot:
-#'   ggmiami(data = df, split_by = "beta", split_at = 0)
+#'   ggmiami(data = gwas_results, split_by = "beta", split_at = 0)
 #'
 #'   If you want to put results from study A in the upper plot and study B
 #'   in the lower plot:
-#'   ggmiami(data = df, split_by = "study", split_at = "A")
+#'   ggmiami(data = gwas_results, split_by = "study", split_at = "A")
 #'
-#'   If you want to add a genome wide line at 9e-8, instead of 5e-8:
-#'   ggmiami(data = df, split_by = "study", split_at = "A", genome_line = 9e-8)
-#'
-#'   If you want to label the top 5 hits with the SNP and gene name:
-#'   ggmiami(data = df, split_by = "study", split_at = "A",
-#'           hits_label_col = c("SNP", "Gene"))
-#'
-#'   If you want to label the top 10 hits from the AHRR, TBX15, and RARA genes:
-#'   ggmiami(data = df, split_by = "study", split_at = "A",
-#'           hits_label_col = "Gene", hits_label = c("AHRR", "TBX15", "RARA"),
-#'           top_n_hits = 10)
-#'
-#'   When labeling, the items in hits_label must all come from a single column.
-#'   Specifying multiple columns will return an error.
-#'
-#'   \dontrun{
-#'   ggmiami(data = df, split_by = "study", split_at = "A",
-#'           hits_label_col = c("chr", Gene"),
-#'           hits_label = c("1", AHRR", "2", "TBX15", "RARA"),
-#'           top_n_hits = 10)
-#'   }
+#'   More examples in the vignette:
+#'   vignette("miamiplot")
 #'
 #' @export
 #' @return a \code{ggplot2} object
