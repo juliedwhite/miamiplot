@@ -1,7 +1,7 @@
 ---
 title: "Plotting with miamiplot"
 author: "Julie White"
-date: "` r Sys.Date()`"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{miamiplot}
@@ -12,11 +12,15 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>", 
+  fig.width = 7,
+  fig.height = 5,
+  dpi = 300,
+  message = FALSE
 )
 ```
 
-```{r setup}
+```{r setup, message=FALSE}
 library(miamiplot)
 library(dplyr)
 library(RColorBrewer)
@@ -40,7 +44,7 @@ str(gwas_results)
 Say you wanted to plot the GWAS from study A and wanted to separate
 the plot by beta values, with the variants with positive beta values in the 
 upper plot. While we're at it, we can specify y-axis label names.
-```{r, error = TRUE, purl = FALSE}
+```{r}
 ggmiami(data = gwas_results[which(gwas_results$study == "A"),], 
         split_by = "beta", split_at = 0, p = "pval", 
         upper_ylab = "Positive beta values",
