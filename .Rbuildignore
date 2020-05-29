@@ -1,3 +1,4 @@
-^.*\.Rproj$         # Automatically added by RStudio,
-^\.Rproj\.user$     # used for temporary files.
-^README\.Rmd$       # An Rmarkdown file used to generate README.md
+^.*\.Rproj$         			# Automatically added by RStudio,
+^\.Rproj\.user$     			# used for temporary files.
+^README\.Rmd$       			# An Rmarkdown file used to generate README.md
+^Creating_gwas_results_data\.Rmd$	# An Rmarkdown file used to generate data
