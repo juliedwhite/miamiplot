@@ -37,7 +37,8 @@ Prepare data for miami plot
 \examples{
   To create plot data where results are split with positive beta values in
   the upper plto and negative beta values in the lower plot:
-    plot_data <- prep_miami_data(data = df, split_by = "Beta", split_at = 0)
+    plot_data <- prep_miami_data(data = gwas_results, split_by = "beta",
+                                 split_at = 0)
 }
 \references{
 \url{https://github.com/juliedwhite/miamiplot}

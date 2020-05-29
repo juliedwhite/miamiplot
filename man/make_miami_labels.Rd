@@ -61,7 +61,7 @@ Make label data.frame for miami plot
  Specifying multiple columns will return an error.
 
  \dontrun{
- ggmiami(data = df, split_by = "study", split_at = "A",
+ ggmiami(data = gwas_results, split_by = "study", split_at = "A",
          hits_label_col = c("chr", Gene"),
          hits_label = c("1", AHRR", "2", "TBX15", "RARA"), top_n_hits = 10)
  }
