@@ -171,7 +171,8 @@ ggmiami <- function(
     ggplot2::scale_color_manual(values = chr_colors) +
     ggplot2::scale_x_continuous(labels = plot_data$axis$chr,
                                 breaks = plot_data$axis$chr_center,
-                                expand = ggplot2::expansion(mult = 0.01)) +
+                                expand = ggplot2::expansion(mult = 0.01),
+                                guide = guide_axis(check.overlap = TRUE)) +
     ggplot2::scale_y_continuous(limits = c(0, plot_data$maxp),
                                 expand =
                                   ggplot2::expansion(mult = c(0.02, 0))) +
