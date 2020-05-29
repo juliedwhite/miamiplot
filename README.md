@@ -29,5 +29,5 @@ plot and negative beta values in the lower plot.
 ggmiami(data = gwas_results[which(gwas_results$study == "A"),], 
         split_by = "beta", split_at = 0, p = "pval", 
         upper_ylab = "Positive beta values",
-        lower_ylab = "Negative beta values"))
+        lower_ylab = "Negative beta values")
 ```
