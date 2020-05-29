@@ -32,10 +32,6 @@ complete documentation of a given function.
 The `miamiplot` package includes a data.frame called `gwas_results` with 
 simulated results from two studies for 30,000 SNPs on 22 chromosomes. 
 ```{r}
-load(file = "../data/gwas_results.rda")
-```
-
-```{r}
 str(gwas_results)
 ```
 
