@@ -1,7 +1,7 @@
 Package: miamiplot
 Type: Package
 Title: Create a ggplot2 miami plot
-Version: 0.1.0
+Version: 1.0.0
 Authors@R: person(given = "Julie", family = "White", 
     email = "julie.white@nih.gov", role = c("aut", "cre"))
 Description: This package can be used to create a Miami plot, with the 
