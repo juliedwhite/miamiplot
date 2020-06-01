@@ -1,5 +1,5 @@
-^.*\.Rproj$         			# Automatically added by RStudio,
-^\.Rproj\.user$     			# used for temporary files.
-^README\.Rmd$       			# An Rmarkdown file used to generate README.md
-^Creating_gwas_results_data\.Rmd$	# An Rmarkdown file used to generate data
-^miamiplot\.Rproj$ 			# R project file
+^.*\.Rproj$
+^\.Rproj\.user$
+^README\.Rmd$
+^Creating_gwas_results_data\.Rmd$
+^miamiplot\.Rproj$
