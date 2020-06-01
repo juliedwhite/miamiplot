@@ -27,8 +27,6 @@ Packages used in this vignette:
 ```{r setup, message=FALSE}
 library(miamiplot)
 library(dplyr)
-library(RColorBrewer)
-library(viridisLite)
 library(ggplot2)
 ```
 
@@ -78,9 +76,13 @@ supply your own alternating colors, you can do so using color names, e.g.
 `chr_colors = c("#d8b365", "#5ab4ac")`, or a list of colors equal to the number 
 of chromosomes in your plot.  
 <br>
-Here, using `brewer.pal`:
+Here, using 22 colors produced by extending the "Paired" RColorBrewer palette.
 ```{r}
-mycolors <- colorRampPalette(brewer.pal(12, "Paired"))(22)
+# colorRampPalette(brewer.pal(12, "Paired"))(22)
+mycolors <- c("#A6CEE3", "#5FA0CA", "#257CB2", "#72B29C", "#A5D981", "#63B84F", 
+              "#4F9F3B", "#B89B74", "#F68181", "#E93E3F", "#E9412F", "#F6975B", 
+              "#FDAC4F", "#FE8B15", "#ED8F47", "#D1AAB7", "#A585BF", "#73489F", 
+              "#A99099", "#F7F599", "#D9AF63", "#B15928")
 
 ggmiami(data = gwas_results, split_by = "study", split_at = "A", p = "pval", 
         upper_ylab = "Study A", lower_ylab = "Study B", chr_colors = mycolors, 
@@ -212,16 +214,15 @@ ggmiami(data = gwas_results, split_by = "study", split_at = "A", p = "pval",
 <br>
 <br>
 You can also change the highlighting color with either names or hex codes 
-using `upper_highlight_color` and `lower_highlight_color`. You can even specify specific colors for each point, if you wanted. I'll give an
-example of making the color based on the p-value of the SNP using viridis 
-colors.
+using `upper_highlight_color` and `lower_highlight_color`, much like what was 
+done when changing the chromosome colors. 
 ```{r}
 studyA_highlight_rsid <- plot_data$upper %>%
   mutate(in_peak = case_when(rel_pos %in% studyA_highlight_pos ~ "Yes", 
                              TRUE ~ "No")) %>%
   filter(in_peak == "Yes") %>%
   arrange(logged_p) %>%
-  mutate(color = plasma(n = nrow(.), direction = -1)) %>%
+  mutate(color = rep(c("magenta", "green"), length.out = n())) %>%
   select(rsid, logged_p, color)
 ```
   
@@ -245,8 +246,8 @@ p <- ggmiami(data = gwas_results, split_by = "study", split_at = "A",
              upper_highlight = studyA_highlight_rsid$rsid, 
              upper_highlight_col = "rsid", upper_highlight_color = "magenta")
 
-ggsave(p, filename = "ExampleMiamiPlot.png", device = "png", width = 8, 
-       height = 6, units = "in")
+# ggsave(p, filename = "ExampleMiamiPlot.png", device = "png", width = 8, 
+       # height = 6, units = "in")
 ```
 
 # A few notes

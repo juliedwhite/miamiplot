@@ -42,16 +42,21 @@ A data.frame with three columns: relative position, logged p-value,
 Make highlight data.frame for miami plot
 }
 \examples{
+ \dontrun{
+ # You can provide a list of SNP / gene names
  upper_highlight <- highlight_miami(data = plot_data$upper,
-                                     highlight = "snps_of_interest"
+                                     highlight = c(rs1, rs2, rs3, ..., rsN),
+                                     highlight_col = "rsid")
+
+ # Or an object containing those names.
+ upper_highlight <- highlight_miami(data = plot_data$upper,
+                                     highlight = snps_of_interest,
                                      highlight_col = "rsid")
 
  # When highlighting, the items in 'highlight' must all come from a single
  # column. Specifying multiple columns in highlight_col will return an error.
-
- \dontrun{
  highlight_miami(data = df, split_by = "study", split_at = "A",
-                 highlight = "snps_of_interest",
+                 highlight = snps_of_interest,
                  highlight_col = c("rsid", "gene"))
  }
 

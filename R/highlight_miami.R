@@ -15,16 +15,21 @@
 #'   SNP/probe relative to all other SNPs/probes in the genome. Defaults to
 #'   "rel_pos," assuming data preparation with \code{prep_miami_data}.
 #' @examples
+#'  \dontrun{
+#'  # You can provide a list of SNP / gene names
 #'  upper_highlight <- highlight_miami(data = plot_data$upper,
-#'                                      highlight = "snps_of_interest"
+#'                                      highlight = c(rs1, rs2, rs3, ..., rsN),
+#'                                      highlight_col = "rsid")
+#'
+#'  # Or an object containing those names.
+#'  upper_highlight <- highlight_miami(data = plot_data$upper,
+#'                                      highlight = snps_of_interest,
 #'                                      highlight_col = "rsid")
 #'
 #'  # When highlighting, the items in 'highlight' must all come from a single
 #'  # column. Specifying multiple columns in highlight_col will return an error.
-#'
-#'  \dontrun{
 #'  highlight_miami(data = df, split_by = "study", split_at = "A",
-#'                  highlight = "snps_of_interest",
+#'                  highlight = snps_of_interest,
 #'                  highlight_col = c("rsid", "gene"))
 #'  }
 #'
@@ -35,6 +40,7 @@
 #' @references \url{https://github.com/juliedwhite/miamiplot}
 #'
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #'
 
 highlight_miami <- function(data, highlight, highlight_col,
@@ -69,10 +75,11 @@ highlight_miami <- function(data, highlight, highlight_col,
 
   # Filter the data to get the position of these labels
   highlight_df <- data %>%
-    dplyr::inner_join(x = ., y = highlight_info, by = paste(highlight_col)) %>%
+    dplyr::inner_join(x = data, y = highlight_info,
+                      by = paste(highlight_col)) %>%
     dplyr::rename(rel_pos = !!rlang::sym(rel_pos)) %>%
     dplyr::rename(logged_p = !!rlang::sym(logged_p)) %>%
-    dplyr::select(rel_pos, logged_p, color)
+    dplyr::select(rel_pos, logged_p, .data$color)
 
   # If label_df is empty, it means we did not find any matches so throw a
   # warning.

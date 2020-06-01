@@ -17,6 +17,7 @@
 #'   SNP/probe relative to all other SNPs/probes in the genome. Defaults to
 #'   "rel_pos," assuming data preparation with \code{prep_miami_data}.
 #' @examples
+#'  \dontrun{
 #'  # If you have already run prep_miami_data and want to label the top 5 hits
 #'  # with SNP and gene name:
 #'    upper_top5_labels <- make_miami_labels(data = plot_data$upper,
@@ -32,18 +33,15 @@
 #'
 #'  # When labeling, the items in hits_label must all come from a single column.
 #'  # Specifying multiple columns will return an error.
-#'
-#'  \dontrun{
 #'  ggmiami(data = gwas_results, split_by = "study", split_at = "A",
 #'          hits_label_col = c("chr", Gene"),
 #'          hits_label = c("1", AHRR", "2", "TBX15", "RARA"), top_n_hits = 10)
-#'  }
 #'
 #'  # If you have not run prep_miami_data:
 #'    labels <- make_miami_labels(datat = df, hits_label_col = c("SNP", "pos"),
 #'                                logged_p = "logp",
 #'                                rel_pos = "relative_SNP_position")
-#'
+#'  }
 #' @export
 #' @return A data.frame with three columns: relative position, logged p-value,
 #'   and the label to add to the miami plot. Designed to be used with ggrepel.
@@ -51,6 +49,7 @@
 #' @references \url{https://github.com/juliedwhite/miamiplot}
 #'
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #'
 
 make_miami_labels <- function(data, hits_label_col, hits_label = NULL,
@@ -66,14 +65,16 @@ make_miami_labels <- function(data, hits_label_col, hits_label = NULL,
     if (length(hits_label_col) == 1) {
       label_df <- data %>%
         dplyr::mutate(label = !!rlang::sym(hits_label_col)) %>%
-        dplyr::select(!!rlang::sym(rel_pos), !!rlang::sym(logged_p), label)
+        dplyr::select(!!rlang::sym(rel_pos), !!rlang::sym(logged_p),
+                      .data$label)
 
       # Or, if the user has given two column names in "hits_label"
     } else if (length(hits_label_col) == 2) {
       label_df <- data %>%
         dplyr::mutate(label = paste0(!!rlang::sym(hits_label_col[1]), "\n",
                                      !!rlang::sym(hits_label_col[2]))) %>%
-        dplyr::select(!!rlang::sym(rel_pos), !!rlang::sym(logged_p), label)
+        dplyr::select(!!rlang::sym(rel_pos), !!rlang::sym(logged_p),
+                      .data$label)
     }
 
   # If instead the user has given a character vector of which SNPs/probes/genes
@@ -104,7 +105,8 @@ make_miami_labels <- function(data, hits_label_col, hits_label = NULL,
     label_df <- data %>%
       dplyr::filter(!!rlang::sym(hits_label_col) %in% hits_label) %>%
       dplyr::mutate(label = !!rlang::sym(hits_label_col)) %>%
-      dplyr::select(!!rlang::sym(rel_pos), !!rlang::sym(logged_p), label)
+      dplyr::select(!!rlang::sym(rel_pos), !!rlang::sym(logged_p),
+                    .data$label)
 
     # If label_df is empty, it means we did not find any matches so throw a
     # warning.
@@ -118,7 +120,7 @@ make_miami_labels <- function(data, hits_label_col, hits_label = NULL,
   # If top_n_hits is a number, re-arrange the dataframe and select the top n
   if (checkmate::testCount(top_n_hits)) {
     label_df <- label_df %>%
-      dplyr::arrange(desc(!!rlang::sym(logged_p))) %>%
+      dplyr::arrange(dplyr::desc(!!rlang::sym(logged_p))) %>%
       dplyr::slice(1:top_n_hits)
 
     # Return the df

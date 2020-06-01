@@ -16,7 +16,7 @@
 #'   Defaults to "p"
 #' @examples
 #'   # To create plot data where results are split with positive beta values in
-#'   # the upper plto and negative beta values in the lower plot:
+#'   # the upper plot and negative beta values in the lower plot:
 #'     plot_data <- prep_miami_data(data = gwas_results, split_by = "beta",
 #'                                  split_at = 0, p = "pval")
 #' @export
@@ -26,6 +26,7 @@
 #' @references \url{https://github.com/juliedwhite/miamiplot}
 #'
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #'
 
 prep_miami_data <- function(
@@ -48,20 +49,20 @@ prep_miami_data <- function(
     # Compute chromosome size
     dplyr::summarise(chrlength = max(!!rlang::sym(pos))) %>%
     # Calculate cumulative position of each chromosome
-    dplyr::mutate(cumulativechrlength = cumsum(as.numeric(chrlength)) -
-                    chrlength) %>%
+    dplyr::mutate(cumulativechrlength = cumsum(as.numeric(.data$chrlength)) -
+                    .data$chrlength) %>%
     # Remove chr length column
-    dplyr::select(-chrlength) %>%
+    dplyr::select(-.data$chrlength) %>%
     # Temporarily add the cumulative length of each chromosome to the initial
     # dataset
-    dplyr::left_join(data, ., by = chr) %>%
+    dplyr::left_join(data, .data, by = chr) %>%
     # Sort by chr then position
     dplyr::arrange(!!rlang::sym(chr), !!rlang::sym(pos)) %>%
     # Add the position to the cumulative chromosome length to get the position
     # of this probe relative to all other probes
-    dplyr::mutate(rel_pos = !!rlang::sym(pos) + cumulativechrlength) %>%
+    dplyr::mutate(rel_pos = !!rlang::sym(pos) + .data$cumulativechrlength) %>%
     # Remove cumulative chr length column
-    dplyr::select(-cumulativechrlength)
+    dplyr::select(-.data$cumulativechrlength)
 
   # However, we don't want to print the cumulative position on the x-axis, so we
   # need to provide the chromosome position labels relative to the entire
@@ -70,7 +71,7 @@ prep_miami_data <- function(
     #Group by chromosome
     dplyr::group_by(!!rlang::sym(chr)) %>%
     #Find the center of the chromosome
-    dplyr::summarize(chr_center = (max(rel_pos) + min(rel_pos)) / 2)
+    dplyr::summarize(chr_center = (max(.data$rel_pos) + min(.data$rel_pos)) / 2)
 
   # To make it easier for ourselves later, create function-named chromosome and
   # logged p-value columns
