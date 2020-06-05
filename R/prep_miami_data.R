@@ -68,9 +68,11 @@ prep_miami_data <- function(
   # need to provide the chromosome position labels relative to the entire
   # genome.
   axis_data <- data %>%
-    #Group by chromosome
-    dplyr::group_by(!!rlang::sym(chr)) %>%
-    #Find the center of the chromosome
+    # Change the name of the chromosome column
+    dplyr::mutate(chr = !!rlang::sym(chr)) %>%
+    # Group by chromosome
+    dplyr::group_by(chr) %>%
+    # Find the center of the chromosome
     dplyr::summarize(chr_center = (max(.data$rel_pos) + min(.data$rel_pos)) / 2)
 
   # To make it easier for ourselves later, create function-named chromosome and
