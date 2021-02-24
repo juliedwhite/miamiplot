@@ -9,7 +9,9 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r setup, include = FALSE}
+options(rmarkdown.html_vignette.check_title = FALSE)
+
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>", 
@@ -24,7 +26,7 @@ plots for GWAS or EWAS results. Use `?FunctionName` in the R console to get the
 complete documentation of a given function.  
 <br>
 Packages used in this vignette:
-```{r setup, message=FALSE}
+```{r, message=FALSE}
 library(miamiplot)
 library(dplyr)
 library(ggplot2)
