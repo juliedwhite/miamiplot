@@ -3,3 +3,5 @@
 ^README\.Rmd$
 ^Creating_gwas_results_data\.Rmd$
 ^miamiplot\.Rproj$
+^doc$
+^Meta$
