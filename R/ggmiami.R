@@ -89,6 +89,8 @@ ggmiami <- function(
   pos = "pos",
   p  =  "p",
   chr_colors = c("black", "grey"),
+  up_chr_colors = c("red", "grey"),
+  low_chr_colors = c("blue", "grey"),
   upper_ylab = "-log10(p)",
   lower_ylab = "-log10(p)",
   genome_line = 5e-8,
@@ -150,7 +152,7 @@ ggmiami <- function(
     ggplot2::geom_point(data = plot_data$upper,
                         aes(x = .data$rel_pos, y = .data$logged_p,
                             color = as.factor(.data$chr)), size = 0.25) +
-    ggplot2::scale_color_manual(values = chr_colors) +
+    ggplot2::scale_color_manual(values = up_chr_colors) +
     ggplot2::scale_x_continuous(labels = plot_data$axis$chr,
                                 breaks = plot_data$axis$chr_center,
                                 expand = ggplot2::expansion(mult = 0.01),
@@ -170,7 +172,7 @@ ggmiami <- function(
     ggplot2::geom_point(data = plot_data$lower,
                         aes(x = .data$rel_pos, y = .data$logged_p,
                             color = as.factor(.data$chr)), size = 0.25) +
-    ggplot2::scale_color_manual(values = chr_colors) +
+    ggplot2::scale_color_manual(values = low_chr_colors) +
     ggplot2::scale_x_continuous(breaks = plot_data$axis$chr_center,
                                 position = "top",
                                 expand = ggplot2::expansion(mult = 0.01)) +
