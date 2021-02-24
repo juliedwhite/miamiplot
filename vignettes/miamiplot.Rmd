@@ -28,6 +28,7 @@ Packages used in this vignette:
 library(miamiplot)
 library(dplyr)
 library(ggplot2)
+requireNamespace("RColorBrewer", quietly = TRUE)
 ```
 
 The `miamiplot` package includes a data.frame called `gwas_results` with 

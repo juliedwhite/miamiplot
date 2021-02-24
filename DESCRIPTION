@@ -21,7 +21,10 @@ Imports:
     magrittr,
     gridExtra
 RoxygenNote: 7.1.1
-Suggests: knitr, rmarkdown
+Suggests: 
+    knitr,
+    rmarkdown,
+    RColorBrewer
 VignetteBuilder: knitr
 Depends: R (>= 3.2)
 NeedsCompilation: no
