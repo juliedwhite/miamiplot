@@ -12,6 +12,8 @@ ggmiami(
   pos = "pos",
   p = "p",
   chr_colors = c("black", "grey"),
+  upper_chr_colors = NULL,
+  lower_chr_colors = NULL,
   upper_ylab = "-log10(p)",
   lower_ylab = "-log10(p)",
   genome_line = 5e-08,
@@ -52,10 +54,23 @@ Defaults to "pos"}
 \item{p}{The name of the column containing your p-value information.
 Defaults to "p"}
 
-\item{chr_colors}{Either a vector of two colors to alternate across
-chromosomes or a vector of colors to use for coloring chromosomes, with
-length equal to the number of chromosomes being plotted. Defaults to
-alternating black and grey.}
+\item{chr_colors}{Applies the same colors to both upper and lower plots.
+Either a vector of two colors to alternate across chromosomes or a vector
+of colors to use for coloring chromosomes, with length equal to the number
+of chromosomes being plotted. Defaults to alternating black and grey. Set
+NULL if you want to specify different colors for the upper and lower plots.}
+
+\item{upper_chr_colors}{Either a vector of two colors to alternate across the
+chromosomes plotted in the *upper* plot or a vector of colors to use for
+coloring the chromosomes of the *upper* plot, with length equal to the
+number of chromosomes being plotted. Defaults to NULL so that precedence
+can be given to \code{chr_colors} argument.}
+
+\item{lower_chr_colors}{Either a vector of two colors to alternate across the
+chromosomes plotted in the *lower* plot or a vector of colors to use for
+coloring the chromosomes of the *lower* plot, with length equal to the
+number of chromosomes being plotted. Defaults to NULL so that precedence
+can be given to \code{chr_colors} argument.}
 
 \item{upper_ylab}{What would you like the y-axis title for the upper plot to
 be? Defaults to "-log10(p)". Text added here will result in a two-line axis

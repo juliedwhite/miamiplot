@@ -20,7 +20,7 @@ Imports:
     ggrepel,
     magrittr,
     gridExtra
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
 Depends: R (>= 3.2)

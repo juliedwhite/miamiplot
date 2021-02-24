@@ -1,7 +1,7 @@
 ---
 title: "Plotting with miamiplot"
 author: "Julie White"
-date: "`r format(Sys.time(), '%B %d, %Y')`"
+date: "Feb. 24, 2021"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{miamiplot}
@@ -43,12 +43,12 @@ the plot by beta values, with the variants with positive beta values in the
 upper plot. While we're at it, we can specify y-axis label names.
 ```{r}
 ggmiami(data = gwas_results[which(gwas_results$study == "A"),], 
-        split_by = "beta", split_at = 0, p = "pval", 
+        split_by = "beta", split_at = 0, p = "pval",
         upper_ylab = "Positive beta values",
         lower_ylab = "Negative beta values")
 ```
 <br>
-It seems like most of the lower-value SNPs in the peak on chromosome 15 have 
+It seems like most of the lower p-value SNPs in the peak on chromosome 15 have 
 positive beta values.  
 <br>
 <br>
@@ -78,14 +78,26 @@ of chromosomes in your plot.
 <br>
 Here, using 22 colors produced by extending the "Paired" RColorBrewer palette.
 ```{r}
-# colorRampPalette(brewer.pal(12, "Paired"))(22)
-mycolors <- c("#A6CEE3", "#5FA0CA", "#257CB2", "#72B29C", "#A5D981", "#63B84F", 
-              "#4F9F3B", "#B89B74", "#F68181", "#E93E3F", "#E9412F", "#F6975B", 
-              "#FDAC4F", "#FE8B15", "#ED8F47", "#D1AAB7", "#A585BF", "#73489F", 
-              "#A99099", "#F7F599", "#D9AF63", "#B15928")
+mycolors <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(12, 
+                                                                 "Paired"))(22)
 
 ggmiami(data = gwas_results, split_by = "study", split_at = "A", p = "pval", 
         upper_ylab = "Study A", lower_ylab = "Study B", chr_colors = mycolors, 
+        genome_line_color = "black", suggestive_line_color = "#A9A9A9")
+```
+<br>
+<br>
+<br>
+You can also specify different colors for the top and bottom plot, provided
+that you make `chr_colors` NULL and you specify both `upper_chr_colors` and 
+`lower_chr_colors`. You can use color names or hexidecimal names, as above.
+```{r}
+my_upper_colors <- RColorBrewer::brewer.pal(4, "Paired")[1:2]
+my_lower_colors <- RColorBrewer::brewer.pal(4, "Paired")[3:4]
+
+ggmiami(data = gwas_results, split_by = "study", split_at = "A", p = "pval", 
+        upper_ylab = "Study A", lower_ylab = "Study B", chr_colors = NULL,
+        upper_chr_colors = my_upper_colors, lower_chr_colors = my_lower_colors,
         genome_line_color = "black", suggestive_line_color = "#A9A9A9")
 ```
 

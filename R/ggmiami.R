@@ -14,10 +14,21 @@
 #'   Defaults to "pos"
 #' @param p The name of the column containing your p-value information.
 #'   Defaults to "p"
-#' @param chr_colors Either a vector of two colors to alternate across
-#'   chromosomes or a vector of colors to use for coloring chromosomes, with
-#'   length equal to the number of chromosomes being plotted. Defaults to
-#'   alternating black and grey.
+#' @param chr_colors Applies the same colors to both upper and lower plots.
+#'   Either a vector of two colors to alternate across chromosomes or a vector
+#'   of colors to use for coloring chromosomes, with length equal to the number
+#'   of chromosomes being plotted. Defaults to alternating black and grey. Set
+#'   NULL if you want to specify different colors for the upper and lower plots.
+#' @param upper_chr_colors Either a vector of two colors to alternate across the
+#'   chromosomes plotted in the *upper* plot or a vector of colors to use for
+#'   coloring the chromosomes of the *upper* plot, with length equal to the
+#'   number of chromosomes being plotted. Defaults to NULL so that precedence
+#'   can be given to \code{chr_colors} argument.
+#' @param lower_chr_colors Either a vector of two colors to alternate across the
+#'   chromosomes plotted in the *lower* plot or a vector of colors to use for
+#'   coloring the chromosomes of the *lower* plot, with length equal to the
+#'   number of chromosomes being plotted. Defaults to NULL so that precedence
+#'   can be given to \code{chr_colors} argument.
 #' @param upper_ylab What would you like the y-axis title for the upper plot to
 #'   be? Defaults to "-log10(p)". Text added here will result in a two-line axis
 #'   with your text on top and "-log10(p)" below.
@@ -89,8 +100,8 @@ ggmiami <- function(
   pos = "pos",
   p  =  "p",
   chr_colors = c("black", "grey"),
-  up_chr_colors = c("red", "grey"),
-  low_chr_colors = c("blue", "grey"),
+  upper_chr_colors = NULL,
+  lower_chr_colors = NULL,
   upper_ylab = "-log10(p)",
   lower_ylab = "-log10(p)",
   genome_line = 5e-8,
@@ -113,14 +124,18 @@ ggmiami <- function(
   plot_data <- prep_miami_data(data = data, split_by = split_by,
                                split_at = split_at, chr = chr, pos = pos, p = p)
 
-  # Prepare the colors
-  if (length(chr_colors) == 2) {
-    chr_colors <- rep(chr_colors, length.out = nrow(plot_data$axis))
-  } else if (length(chr_colors) == nrow(plot_data$axis)) {
-    chr_colors <- chr_colors
-  } else {
-    stop("The number of colors specified in {chr_colors} does not match the
-         number of chromosomes to be displayed.")
+  # Double check that the colors are specified correctly. Will incorporate them
+  # after the plot is called.
+  # If the user has specified both chr_colors and upper_chr_colors +
+  # lower_chr_colors, return an error message.
+  if (all(!is.null(chr_colors), any(!is.null(upper_chr_colors),
+                                    !is.null(lower_chr_colors)))) {
+    stop("You have specified both chr_colors and upper_chr_colors and/or
+         lower_chr_colors. This package does not know how to use both
+         information simultaneously. Please only use one method for coloring:
+         either chr_colors, for making upper and lower plot have the same
+         colors, or upper_chr_colors + lower_chr_colors for specifying different
+         colors for upper and lower plot.")
   }
 
   # Prepare the axis titles
@@ -152,7 +167,6 @@ ggmiami <- function(
     ggplot2::geom_point(data = plot_data$upper,
                         aes(x = .data$rel_pos, y = .data$logged_p,
                             color = as.factor(.data$chr)), size = 0.25) +
-    ggplot2::scale_color_manual(values = up_chr_colors) +
     ggplot2::scale_x_continuous(labels = plot_data$axis$chr,
                                 breaks = plot_data$axis$chr_center,
                                 expand = ggplot2::expansion(mult = 0.01),
@@ -172,7 +186,6 @@ ggmiami <- function(
     ggplot2::geom_point(data = plot_data$lower,
                         aes(x = .data$rel_pos, y = .data$logged_p,
                             color = as.factor(.data$chr)), size = 0.25) +
-    ggplot2::scale_color_manual(values = low_chr_colors) +
     ggplot2::scale_x_continuous(breaks = plot_data$axis$chr_center,
                                 position = "top",
                                 expand = ggplot2::expansion(mult = 0.01)) +
@@ -184,6 +197,68 @@ ggmiami <- function(
                    axis.text.x = ggplot2::element_blank(),
                    axis.title.x = ggplot2::element_blank(),
                    plot.margin = ggplot2::margin(t = 0, l = 10))
+
+  # Add colors to the plot.
+  # If the user has not changed anything from defaults, chr_colors should not
+  # be NULL and upper_chr_colors + lower_chr_colors should be NULL
+  if (all(!is.null(chr_colors), is.null(upper_chr_colors),
+          is.null(lower_chr_colors))){
+    if (length(chr_colors) == 2) {
+      chr_colors <- rep(chr_colors, length.out = nrow(plot_data$axis))
+    } else if (length(chr_colors) == nrow(plot_data$axis)) {
+      chr_colors <- chr_colors
+    } else {
+      stop("The number of colors specified in {chr_colors} does not match the
+         number of chromosomes to be displayed.")
+    }
+
+    # Add to both plots
+    upper_plot <- upper_plot +
+      ggplot2::scale_color_manual(values = chr_colors)
+    lower_plot <- lower_plot +
+      ggplot2::scale_color_manual(values = chr_colors)
+
+    # If the user has specified different colors for the top and bottom, then
+    # chr_colors should be NULL and upper_chr_colors + lower_chr_colors should
+    # be not NULL
+  } else if (all(is.null(chr_colors), !is.null(upper_chr_colors),
+                 !is.null(lower_chr_colors))) {
+    # Make upper colors
+    if (length(upper_chr_colors) == 2) {
+      upper_chr_colors <- rep(upper_chr_colors,
+                              length.out = nrow(plot_data$axis))
+    } else if (length(upper_chr_colors) == nrow(plot_data$axis)) {
+      upper_chr_colors <- upper_chr_colors
+    } else {
+      stop("The number of colors specified in {upper_chr_colors} does not match
+           the number of chromosomes to be displayed.")
+    }
+
+    # Make lower colors
+    if (length(lower_chr_colors) == 2) {
+      lower_chr_colors <- rep(lower_chr_colors,
+                              length.out = nrow(plot_data$axis))
+    } else if (length(lower_chr_colors) == nrow(plot_data$axis)) {
+      lower_chr_colors <- lower_chr_colors
+    } else {
+      stop("The number of colors specified in {lower_chr_colors} does not match
+           the number of chromosomes to be displayed.")
+    }
+
+    # Add to both plots
+    upper_plot <- upper_plot +
+      ggplot2::scale_color_manual(values = upper_chr_colors)
+    lower_plot <- lower_plot +
+      ggplot2::scale_color_manual(values = lower_chr_colors)
+
+  } else if (all(is.null(chr_colors), any(is.null(upper_chr_colors),
+                                          is.null(lower_chr_colors)))) {
+    stop("It looks like you've specified one of upper or lower chr colors
+         without specifying the other. This package needs both colors, unless
+         you want the upper and lower plot to have the same colors, which is
+         done using {chr_colors}.")
+  }
+
 
   # If the user has requested a suggetive line, add:
   if (!is.null(suggestive_line)) {
