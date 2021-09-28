@@ -31,7 +31,9 @@ ggmiami(data = gwas_results[which(gwas_results$study == "A"),],
         upper_ylab = "Positive beta values",
         lower_ylab = "Negative beta values")
 ```
-![](https://github.com/juliedwhite/miamiplot/raw/master/basic_miami.jpg)
+![basic miami](basic_miami.jpeg)
+
+![basic_miami](https://user-images.githubusercontent.com/19778282/135101574-dab409f2-e112-4250-9a89-1aba5bfd0b89.jpeg)
 
 If you'd like to construct your own code "from scratch" (maybe you want to 
 change the appearance and position of the axes or something else), there is
