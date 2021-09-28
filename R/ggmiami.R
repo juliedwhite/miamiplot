@@ -179,7 +179,7 @@ ggmiami <- function(
     ggplot2::theme_classic() +
     ggplot2::theme(legend.position = "none",
                    axis.title.x = ggplot2::element_blank(),
-                   plot.margin = ggplot2::margin(b = 0, l = 10))
+                   plot.margin = ggplot2::margin(t = 10, b = 0, l = 10, r = 10))
 
   # Create base lower plot
   lower_plot <- ggplot2::ggplot() +
@@ -196,7 +196,7 @@ ggmiami <- function(
     ggplot2::theme(legend.position = "none",
                    axis.text.x = ggplot2::element_blank(),
                    axis.title.x = ggplot2::element_blank(),
-                   plot.margin = ggplot2::margin(t = 0, l = 10))
+                   plot.margin = ggplot2::margin(t = 0, b = 10, l = 10, r = 10))
 
   # Add colors to the plot.
   # If the user has not changed anything from defaults, chr_colors should not
