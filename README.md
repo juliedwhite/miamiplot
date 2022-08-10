@@ -37,3 +37,7 @@ If you'd like to construct your own code "from scratch" (maybe you want to
 change the appearance and position of the axes or something else), there is
 a tutorial using the background code from the package in 
 vignette("scratch_miamiplots").
+
+## Citation
+If you use this package or its vignettes, please cite it as:  
+Julie D. White. 2020. _Miamiplot: An R package for creating ggplot2 based miami plots._ https://github.com/juliedwhite/miamiplot 
