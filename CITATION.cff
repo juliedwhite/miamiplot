@@ -1,0 +1,16 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: >-
+  Miamiplot: An R package to create a ggplot2 based
+  miami plot
+message: >-
+  If you use this package or it's vignettes, please
+  cite it as:
+type: software
+authors:
+  - given-names: Julie
+    family-names: White
+    orcid: 'https://orcid.org/0000-0002-2235-4817'
+repository-code: 'https://github.com/juliedwhite/miamiplot'
