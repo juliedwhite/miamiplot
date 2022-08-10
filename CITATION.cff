@@ -3,11 +3,9 @@
 
 cff-version: 1.2.0
 title: >-
-  Miamiplot: An R package to create a ggplot2 based
-  miami plot
+  Miamiplot: An R package for creating ggplot2 based miami plots.
 message: >-
-  If you use this package or it's vignettes, please
-  cite it using this metadata.
+  If you use this package or it's vignettes, please cite it using this metadata.
 type: software
 authors:
   - given-names: Julie
