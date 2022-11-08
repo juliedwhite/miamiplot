@@ -14,6 +14,8 @@
 #'   Defaults to "pos"
 #' @param p The name of the column containing your p-value information.
 #'   Defaults to "p"
+#' @param diff_y_scales Default is FALSE, where both the top and bottom y-axis scales
+#'   will be symmetric. If TRUE, separate scales will be used for the top and bottom y-axis.
 #' @examples
 #'   # To create plot data where results are split with positive beta values in
 #'   # the upper plot and negative beta values in the lower plot:
@@ -35,7 +37,8 @@ prep_miami_data <- function(
   split_at,
   chr = "chr",
   pos = "pos",
-  p  =  "p") {
+  p  =  "p",
+  diff_y_scales = diff_y_scales) {
 
   # Check the required input
   check_miami_input(data = data, split_by = split_by, split_at = split_at,
@@ -81,9 +84,6 @@ prep_miami_data <- function(
     dplyr::mutate(logged_p = -log10(!!rlang::sym(p))) %>%
     dplyr::rename(chr = as.name(chr))
 
-  # To create a symmetric looking plot, calculate the maximum p-value
-  maxp <- ceiling(max(data$logged_p, na.rm = TRUE))
-
   # Depending on what the user has input for split_by and split_at, make upper
   # and lower plot data.
   if (is.numeric(split_at)) {
@@ -106,7 +106,23 @@ prep_miami_data <- function(
 
   }
 
+  # Based on the value passed to the parameter diff_y_scales, we will create either symmetric or asymmetric y-axis scales.
+
+  if (diff_y_scales==FALSE) {
+	# Calculate the maximum p-value using the entire set of data
+
+	maxp_upper=ceiling(max(data$logged_p, na.rm = TRUE))
+	maxp_lower=ceiling(max(data$logged_p, na.rm = TRUE))  
+
+
+  } else if (diff_y_scales==TRUE) {
+	# Calculate the maximum p-value use the upper set of data and the lower set of data.
+
+	maxp_upper=ceiling(max(upper_data$logged_p, na.rm = TRUE))
+	maxp_lower=ceiling(max(lower_data$logged_p, na.rm = TRUE))
+  }
+
   miami_data_list <- list("upper" = upper_data, "lower" = lower_data,
-                          "axis" = axis_data, "maxp" = maxp)
+                          "axis" = axis_data, "maxp_upper" = maxp_upper, "maxp_lower" = maxp_lower)
   return(miami_data_list)
 }
