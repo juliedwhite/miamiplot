@@ -5,7 +5,7 @@
 Install directly from github using devtools
 ```
 library(devtools)
-install_github("juliedwhite/miamiplot", build_vignettes = TRUE)
+install_github("linranzhou/miamiplot", build_vignettes = FALSE)
 ```
 Load the package each time you use it:
 ```
