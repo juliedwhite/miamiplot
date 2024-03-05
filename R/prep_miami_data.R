@@ -35,7 +35,8 @@ prep_miami_data <- function(
   split_at,
   chr = "chr",
   pos = "pos",
-  p  =  "p") {
+  p  =  "p",
+  split_p = FALSE) {
 
   # Check the required input
   check_miami_input(data = data, split_by = split_by, split_at = split_at,
@@ -81,9 +82,6 @@ prep_miami_data <- function(
     dplyr::mutate(logged_p = -log10(!!rlang::sym(p))) %>%
     dplyr::rename(chr = as.name(chr))
 
-  # To create a symmetric looking plot, calculate the maximum p-value
-  maxp <- ceiling(max(data$logged_p, na.rm = TRUE))
-
   # Depending on what the user has input for split_by and split_at, make upper
   # and lower plot data.
   if (is.numeric(split_at)) {
@@ -105,8 +103,21 @@ prep_miami_data <- function(
       dplyr::filter(!!rlang::sym(split_by) != split_at)
 
   }
+  
+  # To create a symmetric looking plot, calculate the maximum p-value
+  maxp <- ceiling(max(data$logged_p, na.rm = TRUE))
 
-  miami_data_list <- list("upper" = upper_data, "lower" = lower_data,
+  # To handle future plots with free y-axis scales:
+  if (split_p) {
+      upper_maxp <- ceiling(max(upper_data$logged_p, na.rm = TRUE))
+      lower_maxp <- ceiling(max(lower_data$logged_p, na.rm = TRUE))
+
+      miami_data_list <- list("upper" = upper_data, "lower" = lower_data,
+                          "axis" = axis_data, "maxp" = maxp, "upper.maxp" = upper_maxp, "lower.maxp" = lower_maxp)
+  } else {
+      miami_data_list <- list("upper" = upper_data, "lower" = lower_data,
                           "axis" = axis_data, "maxp" = maxp)
+  }
+  
   return(miami_data_list)
 }
