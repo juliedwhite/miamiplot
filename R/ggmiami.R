@@ -165,8 +165,8 @@ ggmiami <- function(
 
   # Set separate y-axis limits in case symmetry is broken by user on purpose
   if (split_p) {
-    upper_maxp = plot_data$upper_maxp
-    lower_maxp = plot_data$lower_maxp
+    upper_maxp = plot_data$upper.maxp
+    lower_maxp = plot_data$lower.maxp
   } else {
     upper_maxp = plot_data$maxp
     lower_maxp = plot_data$maxp
