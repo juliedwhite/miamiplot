@@ -118,11 +118,12 @@ ggmiami <- function(
   upper_highlight_color = "green",
   lower_highlight = NULL,
   lower_highlight_col = NULL,
-  lower_highlight_color = "green") {
+  lower_highlight_color = "green",
+  split_p = FALSE) {
 
   # Prepare the data
   plot_data <- prep_miami_data(data = data, split_by = split_by,
-                               split_at = split_at, chr = chr, pos = pos, p = p)
+                               split_at = split_at, chr = chr, pos = pos, p = p, split_p = split_p)
 
   # Double check that the colors are specified correctly. Will incorporate them
   # after the plot is called.
@@ -162,6 +163,15 @@ ggmiami <- function(
   # Then in ggplot2 call: axis.title.y = ggtext::element_markdown() and un-set
   # the l margin.
 
+  # Set separate y-axis limits in case symmetry is broken by user on purpose
+  if (split_p) {
+    upper_maxp = plot_data$upper_maxp
+    lower_maxp = plot_data$lower_maxp
+  } else {
+    upper_maxp = plot_data$maxp
+    lower_maxp = plot_data$maxp
+  }
+
   # Create base upper plot.
   upper_plot <- ggplot2::ggplot() +
     ggplot2::geom_point(data = plot_data$upper,
@@ -172,7 +182,7 @@ ggmiami <- function(
                                 expand = ggplot2::expansion(mult = 0.01),
                                 guide = ggplot2::guide_axis(check.overlap =
                                                               TRUE)) +
-    ggplot2::scale_y_continuous(limits = c(0, plot_data$maxp),
+    ggplot2::scale_y_continuous(limits = c(0, upper_maxp),
                                 expand =
                                   ggplot2::expansion(mult = c(0.02, 0))) +
     ggplot2::labs(x = "", y = upper_ylab) +
@@ -189,7 +199,7 @@ ggmiami <- function(
     ggplot2::scale_x_continuous(breaks = plot_data$axis$chr_center,
                                 position = "top",
                                 expand = ggplot2::expansion(mult = 0.01)) +
-    ggplot2::scale_y_reverse(limits = c(plot_data$maxp, 0),
+    ggplot2::scale_y_reverse(limits = c(lower_maxp, 0),
                              expand = ggplot2::expansion(mult = c(0, 0.02))) +
     ggplot2::labs(x = "", y = lower_ylab) +
     ggplot2::theme_classic() +
