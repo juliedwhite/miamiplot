@@ -415,6 +415,9 @@ ggmiami <- function(
   }
 
   # Put the two together
-  gridExtra::grid.arrange(upper_plot, lower_plot, nrow = 2)
+  gUpper <- ggplotGrob(upper_plot)
+  gLower <- ggplotGrob(lower_plot)
+  grid::grid.newpage()
+  grid::grid.draw(rbind(gUpper, gLower))
 
 }
