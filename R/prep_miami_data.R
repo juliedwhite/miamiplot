@@ -15,7 +15,9 @@
 #' @param p The name of the column containing your p-value information.
 #'   Defaults to "p"
 #' @param diff_y_scales Default is FALSE, where both the top and bottom y-axis scales
-#'   will be symmetric. If TRUE, separate scales will be used for the top and bottom y-axis.
+#'   will be symmetric, and based on the maximum p-value across both plots. 
+#    If TRUE, separate scales will be used for the top and bottom y-axis, based on the
+#    maximum p-value across the upper and lower plots, respectively.
 #' @examples
 #'   # To create plot data where results are split with positive beta values in
 #'   # the upper plot and negative beta values in the lower plot:
@@ -38,7 +40,7 @@ prep_miami_data <- function(
   chr = "chr",
   pos = "pos",
   p  =  "p",
-  diff_y_scales = diff_y_scales) {
+  diff_y_scales = FALSE) {
 
   # Check the required input
   check_miami_input(data = data, split_by = split_by, split_at = split_at,
@@ -108,18 +110,18 @@ prep_miami_data <- function(
 
   # Based on the value passed to the parameter diff_y_scales, we will create either symmetric or asymmetric y-axis scales.
 
-  if (diff_y_scales==FALSE) {
+  if (diff_y_scales == FALSE) {
 	# Calculate the maximum p-value using the entire set of data
 
-	maxp_upper=ceiling(max(data$logged_p, na.rm = TRUE))
-	maxp_lower=ceiling(max(data$logged_p, na.rm = TRUE))  
+	maxp_upper <- ceiling(max(data$logged_p, na.rm = TRUE))
+	maxp_lower <- ceiling(max(data$logged_p, na.rm = TRUE))  
 
 
-  } else if (diff_y_scales==TRUE) {
+  } else if (diff_y_scales == TRUE) {
 	# Calculate the maximum p-value use the upper set of data and the lower set of data.
 
-	maxp_upper=ceiling(max(upper_data$logged_p, na.rm = TRUE))
-	maxp_lower=ceiling(max(lower_data$logged_p, na.rm = TRUE))
+	maxp_upper <- ceiling(max(upper_data$logged_p, na.rm = TRUE))
+	maxp_lower <- ceiling(max(lower_data$logged_p, na.rm = TRUE))
   }
 
   miami_data_list <- list("upper" = upper_data, "lower" = lower_data,

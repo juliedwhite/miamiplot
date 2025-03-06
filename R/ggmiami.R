@@ -15,7 +15,9 @@
 #' @param p The name of the column containing your p-value information.
 #'   Defaults to "p"
 #' @param diff_y_scales Default is FALSE, where both the top and bottom y-axis scales 
-#'   will be symmetric. If TRUE, separate scales will be used for the top and bottom y-axis.
+#'   will be symmetric, and based on the maximum p-value across both plots. 
+#    If TRUE, separate scales will be used for the top and bottom y-axis, based on the
+#    maximum p-value across the upper and lower plots, respectively.
 #' @param chr_colors Applies the same colors to both upper and lower plots.
 #'   Either a vector of two colors to alternate across chromosomes or a vector
 #'   of colors to use for coloring chromosomes, with length equal to the number
@@ -101,7 +103,7 @@ ggmiami <- function(
   chr = "chr",
   pos = "pos",
   p  =  "p",
-  diff_y_scales=FALSE,
+  diff_y_scales = FALSE,
   chr_colors = c("black", "grey"),
   upper_chr_colors = NULL,
   lower_chr_colors = NULL,
