@@ -14,6 +14,10 @@
 #'   Defaults to "pos"
 #' @param p The name of the column containing your p-value information.
 #'   Defaults to "p"
+#' @param diff_y_scales Default is FALSE, where both the top and bottom y-axis scales 
+#'   will be symmetric, and based on the maximum p-value across both plots. 
+#    If TRUE, separate scales will be used for the top and bottom y-axis, based on the
+#    maximum p-value across the upper and lower plots, respectively.
 #' @param chr_colors Applies the same colors to both upper and lower plots.
 #'   Either a vector of two colors to alternate across chromosomes or a vector
 #'   of colors to use for coloring chromosomes, with length equal to the number
@@ -99,6 +103,7 @@ ggmiami <- function(
   chr = "chr",
   pos = "pos",
   p  =  "p",
+  diff_y_scales = FALSE,
   chr_colors = c("black", "grey"),
   upper_chr_colors = NULL,
   lower_chr_colors = NULL,
@@ -122,7 +127,8 @@ ggmiami <- function(
 
   # Prepare the data
   plot_data <- prep_miami_data(data = data, split_by = split_by,
-                               split_at = split_at, chr = chr, pos = pos, p = p)
+                               split_at = split_at, chr = chr, pos = pos, p = p, 
+			       diff_y_scales = diff_y_scales)
 
   # Double check that the colors are specified correctly. Will incorporate them
   # after the plot is called.
@@ -172,7 +178,7 @@ ggmiami <- function(
                                 expand = ggplot2::expansion(mult = 0.01),
                                 guide = ggplot2::guide_axis(check.overlap =
                                                               TRUE)) +
-    ggplot2::scale_y_continuous(limits = c(0, plot_data$maxp),
+    ggplot2::scale_y_continuous(limits = c(0, plot_data$maxp_upper),
                                 expand =
                                   ggplot2::expansion(mult = c(0.02, 0))) +
     ggplot2::labs(x = "", y = upper_ylab) +
@@ -189,7 +195,7 @@ ggmiami <- function(
     ggplot2::scale_x_continuous(breaks = plot_data$axis$chr_center,
                                 position = "top",
                                 expand = ggplot2::expansion(mult = 0.01)) +
-    ggplot2::scale_y_reverse(limits = c(plot_data$maxp, 0),
+    ggplot2::scale_y_reverse(limits = c(plot_data$maxp_lower, 0),
                              expand = ggplot2::expansion(mult = c(0, 0.02))) +
     ggplot2::labs(x = "", y = lower_ylab) +
     ggplot2::theme_classic() +
@@ -316,7 +322,7 @@ ggmiami <- function(
                                     label = .data$label),
                                 size = 2, segment.size = 0.2,
                                 point.padding = 0.3,
-                                ylim = c(plot_data$maxp / 2, NA),
+                                ylim = c(plot_data$maxp_upper / 2, NA),
                                 min.segment.length = 0, force = 2,
                                 box.padding = 0.5)
 
@@ -327,7 +333,7 @@ ggmiami <- function(
                                     label = .data$label),
                                 size = 2, segment.size = 0.2,
                                 point.padding = 0.3,
-                                ylim = c(NA, -(plot_data$maxp / 2)),
+                                ylim = c(NA, -(plot_data$maxp_lower / 2)),
                                 min.segment.length = 0, force = 2,
                                 box.padding = 0.5)
   }
@@ -346,7 +352,7 @@ ggmiami <- function(
                                       label = .data$label),
                                   size = 2, segment.size = 0.2,
                                   point.padding = 0.3,
-                                  ylim = c(plot_data$maxp / 2, NA),
+                                  ylim = c(plot_data$maxp_upper / 2, NA),
                                   min.segment.length = 0, force = 2,
                                   box.padding = 0.5)
   }
@@ -365,7 +371,7 @@ ggmiami <- function(
                                       label = .data$label),
                                   size = 2, segment.size = 0.2,
                                   point.padding = 0.3,
-                                  ylim = c(NA, -(plot_data$maxp / 2)),
+                                  ylim = c(NA, -(plot_data$maxp_lower / 2)),
                                   min.segment.length = 0, force = 2,
                                   box.padding = 0.5)
   }
